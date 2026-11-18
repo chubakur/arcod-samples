@@ -16,7 +16,7 @@ Arcod: если чего-то не хватает — это фиксирует�
 | 001 | [expense-splitter](001-expense-splitter/) | Совместные траты и балансы | `kv`, `ids`, типы-записи, ошибки, валидация |
 | 002 | [webhook-inbox](002-webhook-inbox/) | Вебхуки: идемпотентность, очередь, повторы, DLQ | `kv`, `queue`, `jobs`, `ids`, retry, дедупликация |
 
-Очередь идей — [IDEAS.md](IDEAS.md).
+Очередь идей — [IDEAS.md](IDEAS.md). Журнал фидбека и перепроверка закрытых issue — [ISSUES.md](ISSUES.md).
 
 ## Структура каталога
 
