@@ -17,6 +17,7 @@ Arcod: если чего-то не хватает — это фиксирует�
 | 002 | [webhook-inbox](002-webhook-inbox/) | Вебхуки: идемпотентность, очередь, повторы, DLQ | `kv`, `queue`, `jobs`, `ids`, retry, дедупликация |
 | 003 | [collab-board](003-collab-board/) | Совместная доска: слияние правок без потерь | `kv`, `stream` (websocket), `ids`, идемпотентность |
 | 004 | [turn-clock](004-turn-clock/) | Пошаговые партии: банк времени, таймауты, переподключение | `kv`, `stream`, `ids`, `datetime`, проекция журнала |
+| 005 | [fence-locks](005-fence-locks/) | Распределённые аренды: fencing token, продление, guard от зависшего держателя | `kv`, `ids`, `unique` как атомарный claim, составные списки в examples |
 
 Очередь идей — [IDEAS.md](IDEAS.md). Журнал фидбека и перепроверка закрытых issue — [ISSUES.md](ISSUES.md).
 

@@ -19,6 +19,16 @@
 | [#10](https://github.com/chubakur/arcod/issues/10) | kv: нет CAS/атомарного счётчика для read-modify-write | 003, параллельные `POST /ops` | open | — |
 | [#11](https://github.com/chubakur/arcod/issues/11) | impl: тела операций делят один модуль, top-level имена сталкиваются в рантайме | 004, `const LINES` в `tick` и `replay` | open | — |
 | [#12](https://github.com/chubakur/arcod/issues/12) | timers: нет отложенного запуска at/after, дедлайн нельзя закрыть без запроса | 004, `settle` на каждом `tick` | open | — |
+| [#13](https://github.com/chubakur/arcod/issues/13) | rules: `unique` не поддерживает составной ключ — модель хранит синтетическое поле | 005, `arcod check` на `unique F.(name, fence)` | open | — |
+| [#14](https://github.com/chubakur/arcod/issues/14) | http: ошибка не может вернуть данные — в 409 нет fence и `expiresAt` | 005, `POST /v1/locks/:name/acquire` | open | — |
+
+## Перепроверка 18.11.2026 (перед 005)
+
+Закрытых **после** прошлой проверки (18.11.2026, 10:46) нет: #2–#8 закрыты в
+07:41–07:42 и уже проверены на чистом состоянии; arcod на `origin/main` с тех
+пор не менялся (`8c7c257`). Дополнительно: #3 (литерал списка) подтверждён
+новым примером — `acquireAll(["orders/2","orders/1"])` в `examples` парсится и
+исполняется, `arcod check` чист, `arcod test` — 5/5.
 
 ## Как проверяем
 
