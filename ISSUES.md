@@ -17,10 +17,27 @@
 | [#8](https://github.com/chubakur/arcod/issues/8) | queue: job с одним параметром получает весь объект сообщения | 002, публикация `{eventId}` | fixed | 18.11.2026 |
 | [#9](https://github.com/chubakur/arcod/issues/9) | sql: `io.find` падает с `TypeError: q is not a function` | 003, `store: sql` + список | open | — |
 | [#10](https://github.com/chubakur/arcod/issues/10) | kv: нет CAS/атомарного счётчика для read-modify-write | 003, параллельные `POST /ops` | open | — |
-| [#11](https://github.com/chubakur/arcod/issues/11) | impl: тела операций делят один модуль, top-level имена сталкиваются в рантайме | 004, `const LINES` в `tick` и `replay` | open | — |
+| [#11](https://github.com/chubakur/arcod/issues/11) | impl: тела операций делят один модуль, top-level имена сталкиваются в рантайме | 004, `const LINES` в `tick` и `replay` | fixed | 19.11.2026 |
 | [#12](https://github.com/chubakur/arcod/issues/12) | timers: нет отложенного запуска at/after, дедлайн нельзя закрыть без запроса | 004, `settle` на каждом `tick` | open | — |
-| [#13](https://github.com/chubakur/arcod/issues/13) | rules: `unique` не поддерживает составной ключ — модель хранит синтетическое поле | 005, `arcod check` на `unique F.(name, fence)` | open | — |
-| [#14](https://github.com/chubakur/arcod/issues/14) | http: ошибка не может вернуть данные — в 409 нет fence и `expiresAt` | 005, `POST /v1/locks/:name/acquire` | open | — |
+| [#13](https://github.com/chubakur/arcod/issues/13) | rules: `unique` не поддерживает составной ключ — модель хранит синтетическое поле | 005, `arcod check` на `unique F.(name, fence)` | fixed | 19.11.2026 |
+| [#14](https://github.com/chubakur/arcod/issues/14) | http: ошибка не может вернуть данные — в 409 нет fence и `expiresAt` | 005, `POST /v1/locks/:name/acquire` | fixed | 19.11.2026 |
+| [#15](https://github.com/chubakur/arcod/issues/15) | store: нет count/агрегата — счётчики индекса считаются полным сканом | 006, `GET /v1/stats` | open | — |
+| [#16](https://github.com/chubakur/arcod/issues/16) | examples: элемент списка не читается — `hits[0]` даёт `unsupported call expression` | 006, `arcod test --impl` | open | — |
+
+## Перепроверка 19.11.2026 (перед 006)
+
+Закрыты после прошлой проверки: #11, #13, #14 (18.11.2026, 16:34–16:44).
+Все три проверены на чистом состоянии (19.11.2026, `c72e338`): свежий
+worktree, удалённые контейнеры и `.arcod`, сборка через
+`node /tmp/arcod-verify/bin/arcod.mjs`. Ни один не воспроизвёлся — комментарии
+с выводом в issue, статус `fixed`.
+
+* #11 — сборка отказывает: `duplicate top-level name "LINES" in impl/replay.mjs and impl/tick.mjs`.
+* #13 — `unique Fence.(name, fence)`: вторая пара даёт 409, другое число при том же имени — 201.
+* #14 — 409 несёт объявленные поля: `{"error":"Conflict","fence":7,"expiresAt":...}`.
+
+Новые пробелы из 006: #15 (нет count/агрегата) и #16 (в примерах нельзя
+прочитать `hits[0]`).
 
 ## Перепроверка 18.11.2026 (перед 005)
 
