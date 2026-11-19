@@ -75,10 +75,10 @@ docker compose -f .arcod/build/docker-compose.yml up -d
   function`. Поэтому листинг каталога (`GET /v1/products`) из API убран;
   дубликат `sku` ловится по `ArcodError('Conflict')` от `insert` (issue #22).
 - Нет условного обновления (compare-and-set): остаток списывается
-  read-modify-write, два параллельных заказа могут уйти в минус (issue #25).
+  read-modify-write, два параллельных заказа могут уйти в минус (issue #10).
 - `arcod build --impl` перегенерирует файлы, но не пересобирает docker-образ;
   `docker compose up` молча поднимает старый код, пока не сделаешь
-  `docker compose build` (issue #26).
+  `docker compose build` (issue #25).
 - Листинг с курсором/сортировкой без `find` нечем выразить; после починки #22
   `GET /v1/products` возвращается одной строкой в impl и спеке.
 

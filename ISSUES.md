@@ -16,7 +16,7 @@
 | [#7](https://github.com/chubakur/arcod/issues/7) | queue: `io.queueDead()` с redis падает на RESP-массиве | 002, `GET /v1/dead` | fixed | 18.11.2026 |
 | [#8](https://github.com/chubakur/arcod/issues/8) | queue: job с одним параметром получает весь объект сообщения | 002, публикация `{eventId}` | fixed | 18.11.2026 |
 | [#9](https://github.com/chubakur/arcod/issues/9) | sql: `io.find` падает с `TypeError: q is not a function` | 003, `store: sql` + список | fixed | 19.11.2026 |
-| [#10](https://github.com/chubakur/arcod/issues/10) | kv: нет CAS/атомарного счётчика для read-modify-write | 003, параллельные `POST /ops` | open | — |
+| [#10](https://github.com/chubakur/arcod/issues/10) | kv: нет CAS/атомарного счётчика для read-modify-write | 003, параллельные `POST /ops`; 010, остаток `sql`-товара | open | 19.11.2026 (010) |
 | [#11](https://github.com/chubakur/arcod/issues/11) | impl: тела операций делят один модуль, top-level имена сталкиваются в рантайме | 004, `const LINES` в `tick` и `replay` | fixed | 19.11.2026 |
 | [#12](https://github.com/chubakur/arcod/issues/12) | timers: нет отложенного запуска at/after, дедлайн нельзя закрыть без запроса | 004, `settle` на каждом `tick` | open | — |
 | [#13](https://github.com/chubakur/arcod/issues/13) | rules: `unique` не поддерживает составной ключ — модель хранит синтетическое поле | 005, `arcod check` на `unique F.(name, fence)` | fixed | 19.11.2026 |
@@ -28,9 +28,10 @@
 | [#19](https://github.com/chubakur/arcod/issues/19) | store: `insert` без `id` даёт 400 `Invalid` без указания поля, `check` молчит | 007, коллекция с натуральным ключом; подтверждено на 008 (`Claim`) | open | — |
 | [#20](https://github.com/chubakur/arcod/issues/20) | store: `find` умеет только равенство — таймеры и очереди сканируют всю сущность | 008, выбор должных запусков по `nextAt` | open | — |
 | [#21](https://github.com/chubakur/arcod/issues/21) | impl: неизвестное имя сущности в `io.*` даёт 500 `Internal` без имени и стектрейса | 008, `'Workflow'` вместо `WorkflowRec` | open | — |
-| [#22](https://github.com/chubakur/arcod/issues/22) | sql: `io.find` падает — `const q` перекрывает `q(name)` в `entityFind` | 009, `GET /v1/reports` (list) | open | — |
+| [#22](https://github.com/chubakur/arcod/issues/22) | sql: `io.find` падает — `const q` перекрывает `q(name)` в `entityFind` | 009, `GET /v1/reports` (list); 010, `io.find('Product')` | open | 19.11.2026 (010) |
 | [#23](https://github.com/chubakur/arcod/issues/23) | sandbox: `io.fetch(...)` ловится как raw network | 009, `arcod build --impl` | open | — |
 | [#24](https://github.com/chubakur/arcod/issues/24) | sql: `bind store -> postgres` генерирует MySQL-клиент, `/healthz` зависает | 009, bind postgres | open | — |
+| [#25](https://github.com/chubakur/arcod/issues/25) | `build --impl` не пересобирает docker-образ: `compose up` поднимает старый impl | 010, правка `impl` + `compose up` | open | — |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -76,6 +77,12 @@ worktree, удалённые контейнеры и `.arcod`, сборка че
 Новые issue из 008: #20 (`find` без диапазонов — план по `nextAt` невозможен),
 #21 (неизвестная сущность в `io.*` — 500 без диагностики). К #19 добавлен
 комментарий с воспроизведением на `Claim` без `id`.
+
+## Проверка 19.11.2026 (перед 010)
+
+Закрытых после прошлой проверки нет: все закрытые (#2–#9, #11, #13, #14) закрыты
+18.11.2026, последняя проверка — 19.11.2026 на `c72e338`. Новые наблюдения
+добавлены комментариями в #10 и #22; создан #25. Пример 010 — PASS.
 
 ## Как проверяем
 
