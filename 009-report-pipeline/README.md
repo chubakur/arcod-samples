@@ -41,6 +41,17 @@ docker compose -f .arcod/build/docker-compose.yml up -d
 Остановка: `docker compose -f .arcod/build/docker-compose.yml down -v`.
 `arcod run --down` не используем — issue #2.
 
+## Локальный нюанс
+
+В этом окружении Docker не может скачать `minio/minio:latest` (pull access denied),
+поэтому для локального прогона образ тегируется из уже имеющегося:
+
+```bash
+docker tag leto-local-minio:latest minio/minio:latest
+```
+
+На машине с обычным доступом к Docker Hub шаг не нужен.
+
 ## Опыт использования Arc
 
 Что нашлось на этом проекте:
