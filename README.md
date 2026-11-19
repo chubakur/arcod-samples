@@ -9,6 +9,9 @@
 Arcod: если чего-то не хватает — это фиксируется в issue, а не отменяет идею. Найденные ограничения и баги уходят в issue
 [`chubakur/arcod`](https://github.com/chubakur/arcod/issues).
 
+Проект — это система: минимум две внешние системы (БД, очередь, S3, IAM, почта,
+OLAP), а не «сервис + kv». Мелкие идеи откладываются в пользу крупных.
+
 ## Проекты
 
 | # | Проект | Идея | Возможности Arc |
@@ -20,6 +23,7 @@ Arcod: если чего-то не хватает — это фиксирует�
 | 005 | [fence-locks](005-fence-locks/) | Распределённые аренды: fencing token, продление, guard от зависшего держателя | `kv`, `ids`, `unique` как атомарный claim, составные списки в examples |
 | 006 | [mini-search](006-mini-search/) | Мини-поисковик: инвертированный индекс, BM25, сниппеты | `kv`, курсорная пагинация, составной `unique`, examples как тесты |
 | 007 | [vector-store](007-vector-store/) | Векторное хранилище: IVF-индекс, фильтры по метаданным, гибридный текст | `kv`, `ids`, составной `unique`, k-means и ANN в песочнице `impl` |
+| 009 | [report-pipeline](009-report-pipeline/) | Отчёт: S3 → очередь → консьюмер → MySQL, retry | `blob`, `queue`, `sql`, `ids`, outbox, consumer |
 
 Очередь идей — [IDEAS.md](IDEAS.md). Журнал фидбека и перепроверка закрытых issue — [ISSUES.md](ISSUES.md).
 
