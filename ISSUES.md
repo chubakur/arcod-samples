@@ -31,6 +31,9 @@
 | [#22](https://github.com/chubakur/arcod/issues/22) | sql: `io.find` падает — `const q` перекрывает `q(name)` в `entityFind` | 009, `GET /v1/reports` (list); 010, `io.find('Product')` | open | 19.11.2026 (010) |
 | [#23](https://github.com/chubakur/arcod/issues/23) | sandbox: `io.fetch(...)` ловится как raw network | 009, `arcod build --impl` | open | — |
 | [#24](https://github.com/chubakur/arcod/issues/24) | sql: `bind store -> postgres` генерирует MySQL-клиент, `/healthz` зависает | 009, bind postgres | open | — |
+| [#26](https://github.com/chubakur/arcod/issues/26) | olap: `uses x: olap` + `x.insert` проходят check, clickhouse поднимается, но эффектов и адаптера нет | 011, `main.arc` без olap; минимальный спек в issue | open | 19.11.2026 (011) |
+| [#27](https://github.com/chubakur/arcod/issues/27) | emit: DTO-типы становятся таблицами; `id: string` в ответе даёт `PRIMARY KEY (TEXT)` и MySQL 1170 | 011, `AlertAck { id: string }` → миграция alertack | open | 19.11.2026 (011) |
+| [#28](https://github.com/chubakur/arcod/issues/28) | jobs: тело с одним параметром получает `{param}`, пример 009 ждёт значение — задание теряется молча | 011, `rollup` без защитного разбора; 009 `process` | open | 19.11.2026 (011) |
 | [#25](https://github.com/chubakur/arcod/issues/25) | `build --impl` не пересобирает docker-образ: `compose up` поднимает старый impl | 010, правка `impl` + `compose up` | open | — |
 
 ## Перепроверка 19.11.2026 (перед 006)
