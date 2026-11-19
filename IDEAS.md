@@ -51,7 +51,7 @@
 | 032 | Календарь слотов: пересечение часовых поясов, перенос, письма | sql, mail, queue | todo |
 | 033 | Прямая загрузка в S3: подписанные ссылки, квоты, сироты | blob, identity, sql | todo |
 | 034 | Видеоплатформа: S3, очередь транскодинга, статусы, ссылки | blob, queue, sql, identity | todo |
-| 035 | Магазин: каталог, заказы в очередь, оплата внешним сервисом, картинки | sql, queue, blob, endpoint, identity | todo |
+| 035 | Магазин: каталог, заказы в очередь, оплата внешним сервисом, картинки | sql, queue, blob, endpoint, identity | partial — [010-shop-checkout](010-shop-checkout/) (sql, queue, blob, endpoint + consumer; IAM не подключён, find сломан) |
 | 036 | Центр уведомлений: шаблоны, fan-out, почта, ретраи, аналитика | sql, queue, mail, olap | todo |
 | 037 | Приём данных: CSV в S3, задания, агрегаты в ClickHouse, отчёты | blob, queue, olap, sql | todo |
 | 038 | Мультитенантный SaaS: IAM, изоляция, квоты, аудит, письма | identity, sql, kv, mail | todo |
