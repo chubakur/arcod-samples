@@ -19,7 +19,7 @@
 | 005 | Сервис распределённых блокировок: аренда, fencing token, продление | атомарные операции, TTL | done — [005-fence-locks](005-fence-locks/) |
 | 006 | Мини-поисковик: инвертированный индекс, ранжирование, сниппеты | полнотекстовый поиск | done — [006-mini-search](006-mini-search/) |
 | 007 | Векторное хранилище: эмбеддинги, ANN-поиск, фильтры по метаданным | вектора, llm-эмбеддинги | done — [007-vector-store](007-vector-store/) (llm.embed — #18, partial) |
-| 008 | Движок workflow: состояния, таймеры, ретраи, компенсации | saga, jobs | todo |
+| 008 | Движок workflow: состояния, таймеры, ретраи, компенсации | saga, jobs | done — partial: [008-flow-engine](008-flow-engine/), таймеры — внешний тик ([#12](https://github.com/chubakur/arcod/issues/12)) |
 | 009 | Телеметрия IoT: приём, пороговые правила, алерты | olap, stream, jobs | todo |
 | 010 | Time-series API: downsampling, retention, диапазонные запросы | olap | todo |
 | 011 | Email-to-API мост: входящее письмо → вебхук с вложением | mail, blob | todo |
