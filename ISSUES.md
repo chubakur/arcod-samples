@@ -21,20 +21,25 @@
 | [#12](https://github.com/chubakur/arcod/issues/12) | timers: нет отложенного запуска at/after, дедлайн нельзя закрыть без запроса | 004, `settle` на каждом `tick` | open | — |
 | [#13](https://github.com/chubakur/arcod/issues/13) | rules: `unique` не поддерживает составной ключ — модель хранит синтетическое поле | 005, `arcod check` на `unique F.(name, fence)` | fixed | 19.11.2026 |
 | [#14](https://github.com/chubakur/arcod/issues/14) | http: ошибка не может вернуть данные — в 409 нет fence и `expiresAt` | 005, `POST /v1/locks/:name/acquire` | fixed | 19.11.2026 |
-| [#15](https://github.com/chubakur/arcod/issues/15) | store: нет count/агрегата — счётчики индекса считаются полным сканом | 006, `GET /v1/stats` | open | — |
-| [#16](https://github.com/chubakur/arcod/issues/16) | examples: элемент списка не читается — `hits[0]` даёт `unsupported call expression` | 006, `arcod test --impl` | open | — |
-| [#17](https://github.com/chubakur/arcod/issues/17) | test: второй path-параметр сдвигает аргументы тела — примеры получают чужие значения | 007, `arcod test --impl` на route с двумя `:param` | open | — |
-| [#18](https://github.com/chubakur/arcod/issues/18) | llm: нет `embed` — векторному хранилищу нечем считать эмбеддинги | 007, `text`-запрос без llm | open | — |
-| [#19](https://github.com/chubakur/arcod/issues/19) | store: `insert` без `id` даёт 400 `Invalid` без указания поля, `check` молчит | 007, коллекция с натуральным ключом; подтверждено на 008 (`Claim`) | open | — |
-| [#20](https://github.com/chubakur/arcod/issues/20) | store: `find` умеет только равенство — таймеры и очереди сканируют всю сущность | 008, выбор должных запусков по `nextAt` | open | — |
-| [#21](https://github.com/chubakur/arcod/issues/21) | impl: неизвестное имя сущности в `io.*` даёт 500 `Internal` без имени и стектрейса | 008, `'Workflow'` вместо `WorkflowRec` | open | — |
-| [#22](https://github.com/chubakur/arcod/issues/22) | sql: `io.find` падает — `const q` перекрывает `q(name)` в `entityFind` | 009, `GET /v1/reports` (list); 010, `io.find('Product')` | open | 19.11.2026 (010) |
-| [#23](https://github.com/chubakur/arcod/issues/23) | sandbox: `io.fetch(...)` ловится как raw network | 009, `arcod build --impl` | open | — |
-| [#24](https://github.com/chubakur/arcod/issues/24) | sql: `bind store -> postgres` генерирует MySQL-клиент, `/healthz` зависает | 009, bind postgres | open | — |
-| [#26](https://github.com/chubakur/arcod/issues/26) | olap: `uses x: olap` + `x.insert` проходят check, clickhouse поднимается, но эффектов и адаптера нет | 011, `main.arc` без olap; минимальный спек в issue | open | 19.11.2026 (011) |
-| [#27](https://github.com/chubakur/arcod/issues/27) | emit: DTO-типы становятся таблицами; `id: string` в ответе даёт `PRIMARY KEY (TEXT)` и MySQL 1170 | 011, `AlertAck { id: string }` → миграция alertack | open | 19.11.2026 (011) |
-| [#28](https://github.com/chubakur/arcod/issues/28) | jobs: тело с одним параметром получает `{param}`, пример 009 ждёт значение — задание теряется молча | 011, `rollup` без защитного разбора; 009 `process` | open | 19.11.2026 (011) |
-| [#25](https://github.com/chubakur/arcod/issues/25) | `build --impl` не пересобирает docker-образ: `compose up` поднимает старый impl | 010, правка `impl` + `compose up` | open | — |
+| [#15](https://github.com/chubakur/arcod/issues/15) | store: нет count/агрегата — счётчики индекса считаются полным сканом | 006, `GET /v1/stats` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#16](https://github.com/chubakur/arcod/issues/16) | examples: элемент списка не читается — `hits[0]` даёт `unsupported call expression` | 006, `arcod test --impl` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#17](https://github.com/chubakur/arcod/issues/17) | test: второй path-параметр сдвигает аргументы тела — примеры получают чужие значения | 007, `arcod test --impl` на route с двумя `:param` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#18](https://github.com/chubakur/arcod/issues/18) | llm: нет `embed` — векторному хранилищу нечем считать эмбеддинги | 007, `text`-запрос без llm | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#19](https://github.com/chubakur/arcod/issues/19) | store: `insert` без `id` даёт 400 `Invalid` без указания поля, `check` молчит | 007, коллекция с натуральным ключом; подтверждено на 008 (`Claim`) | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#20](https://github.com/chubakur/arcod/issues/20) | store: `find` умеет только равенство — таймеры и очереди сканируют всю сущность | 008, выбор должных запусков по `nextAt` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#21](https://github.com/chubakur/arcod/issues/21) | impl: неизвестное имя сущности в `io.*` даёт 500 `Internal` без имени и стектрейса | 008, `'Workflow'` вместо `WorkflowRec` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#22](https://github.com/chubakur/arcod/issues/22) | sql: `io.find` падает — `const q` перекрывает `q(name)` в `entityFind` | 009, `GET /v1/reports` (list); 010, `io.find('Product')` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#23](https://github.com/chubakur/arcod/issues/23) | sandbox: `io.fetch(...)` ловится как raw network | 009, `arcod build --impl` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#24](https://github.com/chubakur/arcod/issues/24) | sql: `bind store -> postgres` генерирует MySQL-клиент, `/healthz` зависает | 009, bind postgres | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#26](https://github.com/chubakur/arcod/issues/26) | olap: `uses x: olap` + `x.insert` проходят check, clickhouse поднимается, но эффектов и адаптера нет | 011, `main.arc` без olap; минимальный спек в issue | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#27](https://github.com/chubakur/arcod/issues/27) | emit: DTO-типы становятся таблицами; `id: string` в ответе даёт `PRIMARY KEY (TEXT)` и MySQL 1170 | 011, `AlertAck { id: string }` → миграция alertack | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#28](https://github.com/chubakur/arcod/issues/28) | jobs: тело с одним параметром получает `{param}`, пример 009 ждёт значение — задание теряется молча | 011, `rollup` без защитного разбора; 009 `process` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#25](https://github.com/chubakur/arcod/issues/25) | `build --impl` не пересобирает docker-образ: `compose up` поднимает старый impl | 010, правка `impl` + `compose up` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
+| [#29](https://github.com/chubakur/arcod/issues/29) | postgres: SCRAM client-first без gs2-заголовка `n,,` — сервис не аутентифицируется | 012, `bind store -> postgres` | open | 20.11.2026 |
+| [#30](https://github.com/chubakur/arcod/issues/30) | queue: `bind events -> rabbitmq` поднимает брокер, но рантайм его игнорирует | 012, 009 | open | 20.11.2026 |
+| [#31](https://github.com/chubakur/arcod/issues/31) | sql: `list<string>` в сущности не вставляется в MySQL JSON (3144) | 012, Tech.skills | open | 20.11.2026 |
+| [#32](https://github.com/chubakur/arcod/issues/32) | docs: `io.remote` возвращает {status, body}, README показывает тело | 012, Router.offer | open | 20.11.2026 |
+| [#33](https://github.com/chubakur/arcod/issues/33) | mail: провайдер mailpit объявлен, но у capability нет эффектов | 012 | open | 20.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -96,3 +101,19 @@ worktree, удалённые контейнеры и `.arcod`, сборка че
 4. Повторить шаги из issue.
 5. Воспроизвелось → комментарий с выводом и `gh issue reopen`, статус `regressed`.
    Не воспроизвелось → комментарий «проверено на чистом состоянии», статус `fixed`.
+
+## Перепроверка 20.11.2026 (перед 012)
+
+Закрыты после прошлой проверки: #15–#28 (19.11.2026, 16:32–18:30).
+Все проверены на чистом состоянии (worktree на `origin/main`, commit
+`59ed63e`, без `.arcod` и старых контейнеров, сборка через
+`node /tmp/arcod-verify/bin/arcod.mjs`):
+
+- #15, #16, #17, #18, #19, #20, #21, #22, #23, #25, #26, #27, #28 — не
+  воспроизводятся, комментарий в issue, статус `fixed`.
+- #24 — исходный симптом (MySQL-клиент вместо postgres, зависание
+  `/healthz`) ушёл, но postgres не аутентифицируется по SCRAM → новый #29.
+- Новые: #29 (postgres SCRAM), #30 (rabbitmq игнорируется),
+  #31 (`list<string>` в MySQL JSON), #32 (`io.remote` возвращает конверт),
+  #33 (mail-провайдер без эффектов).
+
