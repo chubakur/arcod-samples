@@ -30,7 +30,7 @@
 | 011 | Email-to-API мост: письмо → вебхук, вложение в S3, журнал | mail, blob, sql | todo |
 | 012 | Feature store: online/offline консистентность, версии фич | sql, kv, olap | todo |
 | 013 | Зоны доставки: полигоны и тарифы, кэш, геокодер | sql, kv, endpoint | todo |
-| 014 | Подписки и биллинг: пратейшн, dunning, счета, чеки | sql, queue, endpoint, mail | todo |
+| 014 | Подписки и биллинг: пратейшн, dunning, счета, чеки | sql, queue, endpoint, mail | done — [013-billing-dunning](013-billing-dunning/) (proration нет, mail не подключён — #33, отложенный dunning — #12) |
 | 015 | Anti-fraud: velocity-правила, лимиты, внешний скоринг | kv, olap, endpoint | todo |
 | 016 | API-gateway: роутинг, ключи, квоты, журнал доступа | endpoint, kv, olap | todo |
 | 017 | Подписание документов: конверты, порядок, аудит, письма | blob, identity, sql, mail | todo |
