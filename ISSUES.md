@@ -35,12 +35,14 @@
 | [#27](https://github.com/chubakur/arcod/issues/27) | emit: DTO-типы становятся таблицами; `id: string` в ответе даёт `PRIMARY KEY (TEXT)` и MySQL 1170 | 011, `AlertAck { id: string }` → миграция alertack | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
 | [#28](https://github.com/chubakur/arcod/issues/28) | jobs: тело с одним параметром получает `{param}`, пример 009 ждёт значение — задание теряется молча | 011, `rollup` без защитного разбора; 009 `process` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
 | [#25](https://github.com/chubakur/arcod/issues/25) | `build --impl` не пересобирает docker-образ: `compose up` поднимает старый impl | 010, правка `impl` + `compose up` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
-| [#29](https://github.com/chubakur/arcod/issues/29) | postgres: SCRAM client-first без gs2-заголовка `n,,` — сервис не аутентифицируется | 012, `bind store -> postgres` | open | 20.11.2026 |
-| [#30](https://github.com/chubakur/arcod/issues/30) | queue: `bind events -> rabbitmq` поднимает брокер, но рантайм его игнорирует | 012, 009 | open | 20.11.2026 |
-| [#31](https://github.com/chubakur/arcod/issues/31) | sql: `list<string>` в сущности не вставляется в MySQL JSON (3144) | 012, Tech.skills | open | 20.11.2026 |
-| [#32](https://github.com/chubakur/arcod/issues/32) | docs: `io.remote` возвращает {status, body}, README показывает тело | 012, Router.offer | open | 20.11.2026 |
-| [#33](https://github.com/chubakur/arcod/issues/33) | mail: провайдер mailpit объявлен, но у capability нет эффектов | 012 | open | 20.11.2026 |
-| [#34](https://github.com/chubakur/arcod/issues/34) | store: нет агрегата (sum/avg) — деньги в отчёте считаются вычиткой строк и молча занижаются | 013, `impl/stats.mjs` | open | 20.11.2026 |
+| [#29](https://github.com/chubakur/arcod/issues/29) | postgres: SCRAM client-first без gs2-заголовка `n,,` — сервис не аутентифицируется | 012, `bind store -> postgres` | regressed | 23.11.2026 |
+| [#30](https://github.com/chubakur/arcod/issues/30) | queue: `bind events -> rabbitmq` поднимает брокер, но рантайм его игнорирует | 012, 009 | fixed | 23.11.2026 |
+| [#31](https://github.com/chubakur/arcod/issues/31) | sql: `list<string>` в сущности не вставляется в MySQL JSON (3144) | 012, Tech.skills | fixed | 23.11.2026 |
+| [#32](https://github.com/chubakur/arcod/issues/32) | docs: `io.remote` возвращает {status, body}, README показывает тело | 012, Router.offer | fixed | 23.11.2026 |
+| [#33](https://github.com/chubakur/arcod/issues/33) | mail: провайдер mailpit объявлен, но у capability нет эффектов | 012 | fixed | 23.11.2026 |
+| [#34](https://github.com/chubakur/arcod/issues/34) | store: нет агрегата (sum/avg) — деньги в отчёте считаются вычиткой строк и молча занижаются | 013, `impl/stats.mjs` | regressed | 23.11.2026 |
+| [#36](https://github.com/chubakur/arcod/issues/36) | sql: параллельные io-вызовы на одном MySQL-соединении обмениваются наборами строк | 014, job transcode + HTTP | open | 23.11.2026 |
+| [#37](https://github.com/chubakur/arcod/issues/37) | kv: `bind cache -> redis` поднимает контейнер, но io.save/load пишут в SQL `arcod_kv` | 014, первая версия | open | 23.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -141,3 +143,40 @@ network» — выглядит как регресс #6, но это стара�
   #31 (`list<string>` в MySQL JSON), #32 (`io.remote` возвращает конверт),
   #33 (mail-провайдер без эффектов).
 
+
+## 014-video-platform — перепроверка и новые пробелы (23.11.2026)
+
+Чистое состояние: `git worktree add --detach /tmp/arcod-verify origin/main`,
+`f0119d3`; сборка через `node /tmp/arcod-verify/bin/arcod.mjs`; глобальный
+npm link не трогался. Перед работой сняты старые контейнеры и `.arcod`.
+
+Перепроверка закрытых:
+
+- **#29** — postgres не аутентифицируется, но уже по-другому: сгенерированный
+  сервис падает с `ReferenceError: timingSafeEqual is not defined` в
+  `PgConnection.onAuth` (в импорте `node:crypto` метода нет). Issue
+  переоткрыт, статус `regressed`.
+- **#30** — не воспроизводится: `bind events -> rabbitmq` теперь честно
+  валит `check` (`A083`, «no AMQP driver»), тихого memory-fallback нет.
+- **#31** — не воспроизводится: `list<string>` в MySQL JSON вставляется
+  (`tags: ["x","y"]` в строке).
+- **#32** — не воспроизводится: `README_rus.md:476` документирует
+  `{status, body}`.
+- **#33** — не воспроизводится: `mail`/`mailpit` убраны из таблицы
+  провайдеров.
+- **#34** — воспроизводится: `io.aggregate` документирован, но в рантайме
+  `TypeError: io.aggregate is not a function` (при объявленном
+  `store.aggregate`). Issue переоткрыт, статус `regressed`.
+
+Новые пробелы:
+
+- **#36** — параллельные вызовы стора делят одно MySQL-соединение и
+  обмениваются наборами строк (`MySqlConnection` с единственным `pending`).
+  Пример 014 обходит это одним сообщением на видео и чтением строк вместо
+  `count`.
+- **#37** — `bind cache -> redis` провижинит контейнер, но `io.save/load`
+  пишут в SQL-таблицу `arcod_kv`, `REDIS_URL` не читается; возможность `kv`
+  из спеки 014 убрана.
+
+Итог: 014 собран, `smoke.sh` → PASS (mysql + redis queue + minio + вебхук,
+2 консьюмера, ретраи, 409 на дубликат).
