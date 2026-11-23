@@ -43,6 +43,8 @@
 | [#34](https://github.com/chubakur/arcod/issues/34) | store: нет агрегата (sum/avg) — деньги в отчёте считаются вычиткой строк и молча занижаются | 013, `impl/stats.mjs` | regressed | 23.11.2026 |
 | [#36](https://github.com/chubakur/arcod/issues/36) | sql: параллельные io-вызовы на одном MySQL-соединении обмениваются наборами строк | 014, job transcode + HTTP | open | 23.11.2026 |
 | [#37](https://github.com/chubakur/arcod/issues/37) | kv: `bind cache -> redis` поднимает контейнер, но io.save/load пишут в SQL `arcod_kv` | 014, первая версия | open | 23.11.2026 |
+| [#38](https://github.com/chubakur/arcod/issues/38) | impl: операция `request` роняет сервис — `Identifier 'handleRequest' has already been declared` | 015, операция `request` | open | 23.11.2026 |
+| [#39](https://github.com/chubakur/arcod/issues/39) | impl: файлы склеиваются в один модуль — одинаковое имя функции ломает `build --impl` | 015, `subjectHash` в двух файлах | open | 23.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -180,3 +182,26 @@ npm link не трогался. Перед работой сняты стары�
 
 Итог: 014 собран, `smoke.sh` → PASS (mysql + redis queue + minio + вебхук,
 2 консьюмера, ретраи, 409 на дубликат).
+
+## 015-gdpr-erasure — перепроверка и новые пробелы
+
+23.11.2026, чистое состояние: `git worktree add --detach /tmp/arcod-verify origin/main`
+(arcod `f0119d3`), старые контейнеры и `.arcod` сняты, сборка через
+`node /tmp/arcod-verify/bin/arcod.mjs`, глобальный `npm link` не трогался.
+
+Перепроверка закрытых: новых закрытых с прошлой проверки (23.11.2026, 11:55,
+commit `baba94a`) нет — все закрытые arcod-issue закрыты 20.11 или раньше и уже
+проверены на чистом состоянии.
+
+Новые пробелы:
+
+- **#38** — операция с именем `request` проходит `check` и `build`, но сервис
+  падает на старте: генератор выдаёт `handleRequest` и для операции, и для
+  рантайма. Обход — переименовать операцию в `show`.
+- **#39** — impl-файлы компилируются в одно пространство имён: одинаковое имя
+  функции в двух файлах даёт `duplicate top-level name` только на
+  `build --impl`. Общий `lib.mjs`/импорты недоступны.
+
+Итог: 015 собран, `smoke.sh` → PASS (mysql + redis queue + minio + внешний
+комплаенс-шлюз; каскад по трём таблицам, манифест в S3, два консьюмера, ретрай
+на 503 от шлюза, 409 на повторный запрос).

@@ -31,11 +31,11 @@
 | 012 | Feature store: online/offline консистентность, версии фич | sql, kv, olap | todo |
 | 013 | Зоны доставки: полигоны и тарифы, кэш, геокодер | sql, kv, endpoint | todo |
 | 014 | Подписки и биллинг: пратейшн, dunning, счета, чеки | sql, queue, endpoint, mail | done — [013-billing-dunning](013-billing-dunning/) (proration нет, mail не подключён — #33, отложенный dunning — #12) |
-| 015 | Anti-fraud: velocity-правила, лимиты, внешний скоринг | kv, olap, endpoint | todo |
+| 015 | Anti-fraud: velocity-правила, лимиты, внешний скоринг | kv, olap, endpoint | todo — ждёт #37 (`kv` пишет в SQL) и #34 (`io.aggregate`), иначе счётчики врёт |
 | 016 | API-gateway: роутинг, ключи, квоты, журнал доступа | endpoint, kv, olap | todo |
 | 017 | Подписание документов: конверты, порядок, аудит, письма | blob, identity, sql, mail | todo |
 | 018 | Лента рекомендаций: коллаборативная фильтрация, снапшоты моделей | olap, sql, blob | todo |
-| 019 | GDPR-стирание: каскадный поиск PII и удаление по заданию | queue, sql, kv, blob | todo |
+| 019 | GDPR-стирание: каскадный поиск PII и удаление по заданию | queue, sql, blob, endpoint | done — [015-gdpr-erasure](015-gdpr-erasure/) (kv заменён на строку аудита: #37) |
 | 020 | Аукцион: ставки, антиснайпинг, закрытие лота, уведомления | sql, queue, mail | todo |
 | 021 | Коллаборативный редактор: OT/CRDT, курсоры, история версий | stream, sql, blob | todo |
 | 022 | Планировщик встреч: слоты, часовые пояса, приглашения | sql, mail, queue | todo |
