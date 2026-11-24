@@ -27,7 +27,7 @@
 | 008 | Движок workflow: состояния, таймеры, ретраи, компенсации | — | done — [008-flow-engine](008-flow-engine/) |
 | 009 | Report pipeline: S3 → outbox → RabbitMQ → консьюмер → MySQL | blob, queue, sql | done — [009-report-pipeline](009-report-pipeline/) |
 | 010 | Time-series API: приём через очередь, downsampling, retention | olap, queue, sql | partial — [011-metric-lake](011-metric-lake/) (olap нет в языке, #26; холодный слой — S3) |
-| 011 | Email-to-API мост: письмо → вебхук, вложение в S3, журнал | mail, blob, sql | todo |
+| 011 | Email-to-API мост: письмо → вебхук, вложение в S3, журнал | mail, blob, sql | done — [038-email-to-api](038-email-to-api/) (mail — внешний HTTP-провайдер: у capability нет эффектов, #33) |
 | 012 | Feature store: online/offline консистентность, версии фич | sql, kv, olap | todo |
 | 013 | Зоны доставки: полигоны и тарифы, кэш, геокодер | sql, kv, endpoint | todo |
 | 014 | Подписки и биллинг: пратейшн, dunning, счета, чеки | sql, queue, endpoint, mail | done — [013-billing-dunning](013-billing-dunning/) (proration нет, mail не подключён — #33, отложенный dunning — #12) |

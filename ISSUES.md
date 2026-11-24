@@ -50,7 +50,9 @@
 | [#40](https://github.com/chubakur/arcod/issues/40) | Нет способа вызвать операцию по расписанию: cron есть только у workflow | 016, операция `closeDue` | closed как duplicate → #12 | 24.11.2026 |
 | [#41](https://github.com/chubakur/arcod/issues/41) | Несколько `service` в одном модуле: `check` чист, но в compose и роутинге только первый | тест Store + Cache | open | 24.11.2026 |
 | [#42](https://github.com/chubakur/arcod/issues/42) | endpoint: `localhost` → `host.docker.internal`, fetch выбирает IPv6 и падает | 016, `io.remote` Mailer | open | 24.11.2026 |
-| [#43](https://github.com/chubakur/arcod/issues/43) | postgres + queue: outbox-DDL с запятой перед `)` — миграции падают | 036, минимальный pgprobe2 | open | 24.11.2026 |
+| [#43](https://github.com/chubakur/arcod/issues/43) | postgres + queue: outbox-DDL с запятой перед `)` — миграции падают | 036, минимальный pgprobe2 | fixed (проверено 24.11, 9233d2d) | 24.11.2026 |
+| [#48](https://github.com/chubakur/arcod/issues/48) | blob: `io.blobPut` принимает только string — бинарные вложения хранятся base64 | 038, вложение письма в S3 | open | 24.11.2026 |
+| [#49](https://github.com/chubakur/arcod/issues/49) | queue: dead letter только читается — запись нельзя снять после replay | 038, `replay` + `GET /v1/dead` | open | 24.11.2026 |
 
 | [#44](https://github.com/chubakur/arcod/issues/44) | hash: `bind sig -> local` проходит check, но `io.hash` в рантайме нет — 500 | 017, первая версия спеки с `sig: hash` | open | 24.11.2026 |
 ## Перепроверка 19.11.2026 (перед 006)
@@ -299,3 +301,33 @@ worktree `origin/main` (`a6863b8`) поднят только под сборку
 - **#45** закрыт как дубликат #32 (`io.remote` → `{status, body}`); в комментарий
   добавлен новый факт: забытый `body` даёт `NaN` в SQL и ошибку
   `1054 Unknown column 'NaN'`, диагностика уводит в БД.
+
+## 038-email-to-api — перепроверка и новые пробелы (24.11.2026)
+
+Чистое состояние: worktree `origin/main` = `9233d2d`, без `.arcod`, без
+контейнеров. Перепроверен единственный закрытый после прошлой проверки issue
+с воспроизведением:
+
+- **#43** (postgres + queue: запятая в outbox-DDL) — **fixed**. Сначала
+  минимальный `pgprobe2` (postgres + redis, insert + publish), затем
+  `038-email-to-api`: миграции `0001..0007` применились, сервис отвечает,
+  строки и очередь работают. Outbox-DDL на postgres собирается без запятой
+  перед `)`; на mysql остался прежним. Комментарий в #43, reopen не нужен.
+- #40 и #45 закрыты как дубликаты (#12 и #32), воспроизведение не требуется.
+
+Собран 038: Postgres + Redis-очередь + MinIO + почтовый провайдер (endpoint) +
+подписчик (endpoint), два job'а: `ingest` (курсор, дедуп, S3, строки) и
+`deliver` (HMAC, retry, dead letter). `smoke.sh` → PASS: маршрутизация,
+тело и вложение из S3, подпись, дедуп, две неудачи + успех, dead letter,
+replay, 409, 404.
+
+Новые пробелы:
+
+- **#48** — `files.put` только текст: вложение кладётся base64 (+33%), размер
+  и sha256 считаются вручную.
+- **#49** — dead letter нельзя снять: после replay старая запись остаётся,
+  `/v1/dead` растёт вечно.
+- **#33** подтверждён как fixed: в `origin/main` провайдера `mail` в таблице
+  нет; почта в примере — внешний HTTP-провайдер.
+- `#39` (impl склеиваются в один модуль) остаётся проектным решением: `A093`
+  ловит коллизию имён, обходим префиксами.
