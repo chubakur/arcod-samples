@@ -35,7 +35,7 @@
 | [#27](https://github.com/chubakur/arcod/issues/27) | emit: DTO-типы становятся таблицами; `id: string` в ответе даёт `PRIMARY KEY (TEXT)` и MySQL 1170 | 011, `AlertAck { id: string }` → миграция alertack | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
 | [#28](https://github.com/chubakur/arcod/issues/28) | jobs: тело с одним параметром получает `{param}`, пример 009 ждёт значение — задание теряется молча | 011, `rollup` без защитного разбора; 009 `process` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
 | [#25](https://github.com/chubakur/arcod/issues/25) | `build --impl` не пересобирает docker-образ: `compose up` поднимает старый impl | 010, правка `impl` + `compose up` | fixed (проверено 20.11, 59ed63e) | 20.11.2026 |
-| [#29](https://github.com/chubakur/arcod/issues/29) | postgres: SCRAM client-first без gs2-заголовка `n,,` — сервис не аутентифицируется | 012, `bind store -> postgres` | regressed | 23.11.2026 |
+| [#29](https://github.com/chubakur/arcod/issues/29) | postgres: SCRAM client-first без gs2-заголовка `n,,` — сервис не аутентифицируется | 012, `bind store -> postgres` | fixed (проверено 24.11, 4f206dd; SCRAM ок, postgres+queue блокирует #43) | 24.11.2026 |
 | [#30](https://github.com/chubakur/arcod/issues/30) | queue: `bind events -> rabbitmq` поднимает брокер, но рантайм его игнорирует | 012, 009 | fixed | 23.11.2026 |
 | [#31](https://github.com/chubakur/arcod/issues/31) | sql: `list<string>` в сущности не вставляется в MySQL JSON (3144) | 012, Tech.skills | fixed | 23.11.2026 |
 | [#32](https://github.com/chubakur/arcod/issues/32) | docs: `io.remote` возвращает {status, body}, README показывает тело | 012, Router.offer | fixed | 23.11.2026 |
@@ -45,8 +45,10 @@
 | [#37](https://github.com/chubakur/arcod/issues/37) | kv: `bind cache -> redis` поднимает контейнер, но io.save/load пишут в SQL `arcod_kv` | 014, первая версия | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#38](https://github.com/chubakur/arcod/issues/38) | impl: операция `request` роняет сервис — `Identifier 'handleRequest' has already been declared` | 015, операция `request` | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#39](https://github.com/chubakur/arcod/issues/39) | impl: файлы склеиваются в один модуль — одинаковое имя функции ломает `build --impl` | 015, `subjectHash` в двух файлах | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
+| [#40](https://github.com/chubakur/arcod/issues/40) | Нет способа вызвать операцию по расписанию: cron есть только у workflow | 016, операция `closeDue` | closed как duplicate → #12 | 24.11.2026 |
 | [#41](https://github.com/chubakur/arcod/issues/41) | Несколько `service` в одном модуле: `check` чист, но в compose и роутинге только первый | тест Store + Cache | open | 24.11.2026 |
 | [#42](https://github.com/chubakur/arcod/issues/42) | endpoint: `localhost` → `host.docker.internal`, fetch выбирает IPv6 и падает | 016, `io.remote` Mailer | open | 24.11.2026 |
+| [#43](https://github.com/chubakur/arcod/issues/43) | postgres + queue: outbox-DDL с запятой перед `)` — миграции падают | 036, минимальный pgprobe2 | open | 24.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -238,3 +240,26 @@ commit `baba94a`) нет — все закрытые arcod-issue закрыты 
 Итог: 016-auction собран, `smoke.sh` → PASS (mysql + redis queue + почтовый
 шлюз; ставки и три отказа, антиснайпинг +120 с, закрытие sold/unsold,
 три письма, агрегат оборота, идемпотентный второй тик, 404).
+
+## Перепроверка 24.11.2026 (перед 036)
+
+Закрыты после прошлой проверки: #40 (24.11, 08:47 UTC) и #29 (23.11, 20:38 —
+статус в журнале был `regressed`). Проверка на чистом состоянии: свежий worktree
+`origin/main` (`4f206dd`), без `.arcod/build` и старых контейнеров, глобальный
+`npm link` не тронут.
+
+- **#40** закрыт владельцем как duplicate #12 (`timers: нет отложенного запуска`).
+  #12 остаётся открытым; отдельной проверки не требует.
+- **#29 (SCRAM)** — не воспроизводится: минимальный postgres-проект без очереди
+  (`bind store -> postgres`, `postgres:16-alpine`) отдаёт `/healthz` 200,
+  `POST /v1/notes` 201, `GET /v1/notes/:id` 200, в логе postgres ни одного
+  `malformed SCRAM`. Статус `fixed`.
+- Побочная находка при той же проверке: **postgres + queue** падает на outbox-DDL
+  (`published_at BIGINT NULL,\n\n);`), `src/migrate.ts` кладёт пустую строку в
+  join для не-mysql диалекта. Новый **#43**, пример 036 собран на MySQL.
+
+Итог: 036-notification-center собран, тесты на чистом arcod `4f206dd`;
+`smoke.sh` → PASS (mysql + redis queue + s3 + почтовый шлюз; шаблон и 409,
+кампания на 4 адреса, fan-out и deliver консьюмеры, 3 письма с подстановкой,
+третья неудача → dead letter, дневная аналитика 3/1, CSV в S3 и обратно,
+идемпотентный второй fan-out, 400 и 404).

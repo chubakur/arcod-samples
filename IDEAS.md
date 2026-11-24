@@ -52,7 +52,7 @@
 | 033 | Прямая загрузка в S3: подписанные ссылки, квоты, сироты | blob, identity, sql | todo |
 | 034 | Видеоплатформа: S3, очередь транскодинга, статусы, ссылки | blob, queue, sql, identity | done — [014-video-platform](014-video-platform/) |
 | 035 | Магазин: каталог, заказы в очередь, оплата внешним сервисом, картинки | sql, queue, blob, endpoint, identity | partial — [010-shop-checkout](010-shop-checkout/) (sql, queue, blob, endpoint + consumer; IAM не подключён, find сломан) |
-| 036 | Центр уведомлений: шаблоны, fan-out, почта, ретраи, аналитика | sql, queue, mail, olap | todo |
+| 036 | Центр уведомлений: шаблоны, fan-out, почта, ретраи, аналитика | sql, queue, blob, endpoint, ids | done — [036-notification-center](036-notification-center/) (OLAP заменён строками в SQL: адаптера clickhouse нет, #26) |
 | 037 | Приём данных: CSV в S3, задания, агрегаты в ClickHouse, отчёты | blob, queue, olap, sql | todo |
 | 038 | Мультитенантный SaaS: IAM, изоляция, квоты, аудит, письма | identity, sql, kv, mail | todo |
 | 039 | Совместная работа: поток, БД, вложения в S3, присутствие | stream, sql, blob, kv | todo |
