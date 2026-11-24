@@ -49,7 +49,8 @@ say "health: ok (service + mysql + redis queue)"
 # The mail gateway joins the same compose network under the name the spec
 # binds. Its image is the service image, only the entrypoint changes.
 IMAGE=$(grep -m1 'image: arcod/auction-service' .arcod/build/docker-compose.yml | awk '{print $2}')
-NETWORK=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}' arcod-auction-service-1)
+SERVICE_ID=$(docker compose -f .arcod/build/docker-compose.yml ps -q service)
+NETWORK=$(docker inspect -f '{{range $k, $v := .NetworkSettings.Networks}}{{$k}}{{end}}' "$SERVICE_ID")
 [ -n "$IMAGE" ] && [ -n "$NETWORK" ] || fail "cannot find the service image/network"
 docker run -d --name "$MAILER_NAME" -p "${MAIL_PORT}:9096" --network "$NETWORK" --network-alias mailer \
   -v "$PWD/mock:/app" -w /app --entrypoint node "$IMAGE" mailer.mjs >/dev/null

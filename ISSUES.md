@@ -45,7 +45,6 @@
 | [#37](https://github.com/chubakur/arcod/issues/37) | kv: `bind cache -> redis` поднимает контейнер, но io.save/load пишут в SQL `arcod_kv` | 014, первая версия | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#38](https://github.com/chubakur/arcod/issues/38) | impl: операция `request` роняет сервис — `Identifier 'handleRequest' has already been declared` | 015, операция `request` | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#39](https://github.com/chubakur/arcod/issues/39) | impl: файлы склеиваются в один модуль — одинаковое имя функции ломает `build --impl` | 015, `subjectHash` в двух файлах | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
-| [#40](https://github.com/chubakur/arcod/issues/40) | Расписание: операцию нельзя вызвать по cron — тик закрытия остаётся внешним | 016, `POST /v1/admin/close` | open | 24.11.2026 |
 | [#41](https://github.com/chubakur/arcod/issues/41) | Несколько `service` в одном модуле: `check` чист, но в compose и роутинге только первый | тест Store + Cache | open | 24.11.2026 |
 | [#42](https://github.com/chubakur/arcod/issues/42) | endpoint: `localhost` → `host.docker.internal`, fetch выбирает IPv6 и падает | 016, `io.remote` Mailer | open | 24.11.2026 |
 
@@ -216,6 +215,9 @@ commit `baba94a`) нет — все закрытые arcod-issue закрыты 
 `origin/main` (`411c01d`), без `.arcod/build` и старых контейнеров, сборка
 `node /tmp/arcod-verify/bin/arcod.mjs`, глобальный `npm link` не тронут.
 
+- **#12 (расписание)** — подтверждён на 016: `job` не принимает расписание,
+  `workflow` с `cron` не исполняется, закрытие лота остаётся HTTP-тиком
+  `POST /v1/admin/close`. Заведённый было #40 закрыт как дубликат #12.
 - **#34 (store.aggregate)** — не воспроизводится: на mysql
   `io.aggregate('Account', { field: 'amountCents', op: 'sum' })` вернул 3000,
   с `where: { status: 'paid' }` — 1000; в отчёте 016 оборот ставок = 5300
