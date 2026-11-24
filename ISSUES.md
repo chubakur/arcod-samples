@@ -40,6 +40,8 @@
 | [#31](https://github.com/chubakur/arcod/issues/31) | sql: `list<string>` в сущности не вставляется в MySQL JSON (3144) | 012, Tech.skills | fixed | 23.11.2026 |
 | [#32](https://github.com/chubakur/arcod/issues/32) | docs: `io.remote` возвращает {status, body}, README показывает тело | 012, Router.offer | fixed | 23.11.2026 |
 | [#33](https://github.com/chubakur/arcod/issues/33) | mail: провайдер mailpit объявлен, но у capability нет эффектов | 012 | fixed | 23.11.2026 |
+| [#46](https://github.com/chubakur/arcod/issues/46) | job: нет отменяемого контекста — выполняющийся внешний вызов не прервать | 037, cancel посреди slow-шага | open | 24.11.2026 |
+| [#47](https://github.com/chubakur/arcod/issues/47) | contract: POST всегда 201, нельзя объявить 200 для идемпотентного действия | 037, `POST /v1/runs/:id/cancel` → 201 | open | 24.11.2026 |
 | [#34](https://github.com/chubakur/arcod/issues/34) | store: нет агрегата (sum/avg) — деньги в отчёте считаются вычиткой строк и молча занижаются | 013, `impl/stats.mjs` | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#36](https://github.com/chubakur/arcod/issues/36) | sql: параллельные io-вызовы на одном MySQL-соединении обмениваются наборами строк | 014, job transcode + HTTP | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#37](https://github.com/chubakur/arcod/issues/37) | kv: `bind cache -> redis` поднимает контейнер, но io.save/load пишут в SQL `arcod_kv` | 014, первая версия | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
@@ -276,3 +278,24 @@ worktree `origin/main` (`a6863b8`) поднят только под сборку
 письмами → seal-консьюмер → манифест verified → подмена документа ломает
 подписи → decline со skipped → статистика и 404).
 Новый #44 (hash-capability без рантайма), пример обходит через `crypto.subtle`.
+
+## 037-ci-orchestrator — перепроверка и новые пробелы (24.11.2026)
+
+Перепроверка закрытых: новых закрытых после проверки перед 017 нет (последний —
+#40, duplicate #12, проверен 24.11). Отдельный чистый checkout не требовался.
+
+Собран 037: MySQL + Redis-очередь + S3 + внешний раннер (`endpoint`), job
+`execute` с retry, логи шагов и артефакты в S3, отмена между шагами, 409 на
+параллельный прогон, счётчики, dead letter. `smoke.sh` → PASS (успешный прогон
+из 3 шагов, лог и артефакт обратно из S3, 409, отмена, failed+skipped,
+1/1/1 в статистике, 404).
+
+Новые пробелы:
+
+- **#46** — job нельзя прервать: отмена видна только перед следующим шагом,
+  уже отправленный вызов раннера дорабатывает. Пример обходит кооперативной
+  проверкой `cancelRequested`.
+- **#47** — POST всегда отвечает 201: у `cancel` нет способа объявить 200.
+- **#45** закрыт как дубликат #32 (`io.remote` → `{status, body}`); в комментарий
+  добавлен новый факт: забытый `body` даёт `NaN` в SQL и ошибку
+  `1054 Unknown column 'NaN'`, диагностика уводит в БД.

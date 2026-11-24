@@ -57,7 +57,7 @@
 | 038 | Мультитенантный SaaS: IAM, изоляция, квоты, аудит, письма | identity, sql, kv, mail | todo |
 | 039 | Совместная работа: поток, БД, вложения в S3, присутствие | stream, sql, blob, kv | todo |
 | 040 | Подписание документов: S3, IAM, аудит, приглашения, напоминания | blob, identity, sql, mail, queue | todo |
-| 041 | CI-оркестратор: очередь прогонов, артефакты в S3, статусы, отмена | queue, blob, sql | todo |
+| 041 | CI-оркестратор: очередь прогонов, артефакты в S3, статусы, отмена | queue, blob, sql, endpoint | done — [037-ci-orchestrator](037-ci-orchestrator/) |
 | 042 | Биллинг: подписки, метеринг в OLAP, счета, чеки | sql, olap, queue, mail | todo |
 | 043 | IoT-платформа: поток телеметрии, правила, алерты, история | stream, olap, mail, kv | todo |
 | 044 | Диспетчер выездов: заявки, автоподбор техника, фото в S3, уведомления | sql, queue, blob, endpoint | done — [012-field-dispatch](012-field-dispatch/) |
