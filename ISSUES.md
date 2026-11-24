@@ -50,6 +50,7 @@
 | [#42](https://github.com/chubakur/arcod/issues/42) | endpoint: `localhost` → `host.docker.internal`, fetch выбирает IPv6 и падает | 016, `io.remote` Mailer | open | 24.11.2026 |
 | [#43](https://github.com/chubakur/arcod/issues/43) | postgres + queue: outbox-DDL с запятой перед `)` — миграции падают | 036, минимальный pgprobe2 | open | 24.11.2026 |
 
+| [#44](https://github.com/chubakur/arcod/issues/44) | hash: `bind sig -> local` проходит check, но `io.hash` в рантайме нет — 500 | 017, первая версия спеки с `sig: hash` | open | 24.11.2026 |
 ## Перепроверка 19.11.2026 (перед 006)
 
 Закрыты после прошлой проверки: #11, #13, #14 (18.11.2026, 16:34–16:44).
@@ -263,3 +264,15 @@ commit `baba94a`) нет — все закрытые arcod-issue закрыты 
 кампания на 4 адреса, fan-out и deliver консьюмеры, 3 письма с подстановкой,
 третья неудача → dead letter, дневная аналитика 3/1, CSV в S3 и обратно,
 идемпотентный второй fan-out, 400 и 404).
+
+## Перепроверка 24.11.2026 (перед 017)
+
+Новых закрытых issue после прошлой проверки нет: последний — #40 (24.11,
+08:47 UTC, duplicate #12), он уже был разобран в проверке перед 036. Чистый
+worktree `origin/main` (`a6863b8`) поднят только под сборку 017.
+
+Итог: 017-contract-signing собран, `smoke.sh` → PASS (mysql + redis queue + s3 +
+почтовый шлюз; конверт → два подписанта по очереди → приглашения и напоминание
+письмами → seal-консьюмер → манифест verified → подмена документа ломает
+подписи → decline со skipped → статистика и 404).
+Новый #44 (hash-capability без рантайма), пример обходит через `crypto.subtle`.
