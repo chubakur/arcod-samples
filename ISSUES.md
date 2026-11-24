@@ -40,11 +40,14 @@
 | [#31](https://github.com/chubakur/arcod/issues/31) | sql: `list<string>` в сущности не вставляется в MySQL JSON (3144) | 012, Tech.skills | fixed | 23.11.2026 |
 | [#32](https://github.com/chubakur/arcod/issues/32) | docs: `io.remote` возвращает {status, body}, README показывает тело | 012, Router.offer | fixed | 23.11.2026 |
 | [#33](https://github.com/chubakur/arcod/issues/33) | mail: провайдер mailpit объявлен, но у capability нет эффектов | 012 | fixed | 23.11.2026 |
-| [#34](https://github.com/chubakur/arcod/issues/34) | store: нет агрегата (sum/avg) — деньги в отчёте считаются вычиткой строк и молча занижаются | 013, `impl/stats.mjs` | regressed | 23.11.2026 |
-| [#36](https://github.com/chubakur/arcod/issues/36) | sql: параллельные io-вызовы на одном MySQL-соединении обмениваются наборами строк | 014, job transcode + HTTP | open | 23.11.2026 |
-| [#37](https://github.com/chubakur/arcod/issues/37) | kv: `bind cache -> redis` поднимает контейнер, но io.save/load пишут в SQL `arcod_kv` | 014, первая версия | open | 23.11.2026 |
-| [#38](https://github.com/chubakur/arcod/issues/38) | impl: операция `request` роняет сервис — `Identifier 'handleRequest' has already been declared` | 015, операция `request` | open | 23.11.2026 |
-| [#39](https://github.com/chubakur/arcod/issues/39) | impl: файлы склеиваются в один модуль — одинаковое имя функции ломает `build --impl` | 015, `subjectHash` в двух файлах | open | 23.11.2026 |
+| [#34](https://github.com/chubakur/arcod/issues/34) | store: нет агрегата (sum/avg) — деньги в отчёте считаются вычиткой строк и молча занижаются | 013, `impl/stats.mjs` | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
+| [#36](https://github.com/chubakur/arcod/issues/36) | sql: параллельные io-вызовы на одном MySQL-соединении обмениваются наборами строк | 014, job transcode + HTTP | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
+| [#37](https://github.com/chubakur/arcod/issues/37) | kv: `bind cache -> redis` поднимает контейнер, но io.save/load пишут в SQL `arcod_kv` | 014, первая версия | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
+| [#38](https://github.com/chubakur/arcod/issues/38) | impl: операция `request` роняет сервис — `Identifier 'handleRequest' has already been declared` | 015, операция `request` | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
+| [#39](https://github.com/chubakur/arcod/issues/39) | impl: файлы склеиваются в один модуль — одинаковое имя функции ломает `build --impl` | 015, `subjectHash` в двух файлах | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
+| [#40](https://github.com/chubakur/arcod/issues/40) | Расписание: операцию нельзя вызвать по cron — тик закрытия остаётся внешним | 016, `POST /v1/admin/close` | open | 24.11.2026 |
+| [#41](https://github.com/chubakur/arcod/issues/41) | Несколько `service` в одном модуле: `check` чист, но в compose и роутинге только первый | тест Store + Cache | open | 24.11.2026 |
+| [#42](https://github.com/chubakur/arcod/issues/42) | endpoint: `localhost` → `host.docker.internal`, fetch выбирает IPv6 и падает | 016, `io.remote` Mailer | open | 24.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -205,3 +208,31 @@ commit `baba94a`) нет — все закрытые arcod-issue закрыты 
 Итог: 015 собран, `smoke.sh` → PASS (mysql + redis queue + minio + внешний
 комплаенс-шлюз; каскад по трём таблицам, манифест в S3, два консьюмера, ретрай
 на 503 от шлюза, 409 на повторный запрос).
+
+## Перепроверка 24.11.2026 (перед 016)
+
+Закрыты после прошлой проверки: #34, #36, #37, #38, #39 (23.11.2026,
+19:08–22:11 UTC). Все пять проверены на чистом состоянии: свежий worktree
+`origin/main` (`411c01d`), без `.arcod/build` и старых контейнеров, сборка
+`node /tmp/arcod-verify/bin/arcod.mjs`, глобальный `npm link` не тронут.
+
+- **#34 (store.aggregate)** — не воспроизводится: на mysql
+  `io.aggregate('Account', { field: 'amountCents', op: 'sum' })` вернул 3000,
+  с `where: { status: 'paid' }` — 1000; в отчёте 016 оборот ставок = 5300
+  сходится с суммой принятых. Статус `fixed`.
+- **#36 (общее MySQL-соединение)** — не воспроизводится: 200 параллельных
+  `GET /v1/videos/:id` (`fetch` + `find`) при работающем консьюмере, который
+  писал 20 строк на видео, — ни одного чужого `videoId`. Статус `fixed`.
+- **#37 (kv → redis)** — не воспроизводится: `bind cache -> redis`,
+  `io.save` создал ключ `msg:k:a` в контейнере redis, значение пережило
+  `docker restart service`. Статус `fixed`.
+- **#38 (операция `request`)** — не воспроизводится: `public op request`
+  собирается и отвечает 200/404, `handleRequest` не конфликтует. Статус
+  `fixed`.
+- **#39 (склейка impl)** — не воспроизводится в заявленном виде: общий модуль
+  не появился, но `check` теперь даёт `A093` с файлом, строкой и подсказкой
+  до сборки. Это ровно второй вариант из ожидания issue. Статус `fixed`.
+
+Итог: 016-auction собран, `smoke.sh` → PASS (mysql + redis queue + почтовый
+шлюз; ставки и три отказа, антиснайпинг +120 с, закрытие sold/unsold,
+три письма, агрегат оборота, идемпотентный второй тик, 404).
