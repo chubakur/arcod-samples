@@ -29,7 +29,7 @@
 | 010 | Time-series API: приём через очередь, downsampling, retention | olap, queue, sql | partial — [011-metric-lake](011-metric-lake/) (olap нет в языке, #26; холодный слой — S3) |
 | 011 | Email-to-API мост: письмо → вебхук, вложение в S3, журнал | mail, blob, sql | done — [038-email-to-api](038-email-to-api/) (mail — внешний HTTP-провайдер: у capability нет эффектов, #33) |
 | 012 | Feature store: online/offline консистентность, версии фич | sql, kv, olap | partial — [040-feature-store](040-feature-store/) (olap-адаптера нет, #26; kv-слой в arcod_kv, #37, #52) |
-| 013 | Зоны доставки: полигоны и тарифы, кэш, геокодер | sql, kv, endpoint | todo |
+| 013 | Зоны доставки: полигоны и тарифы, кэш, геокодер | sql, kv, endpoint | done — [041-delivery-zones](041-delivery-zones/) (kv-кэш в SQL: A094/#37, Redis — очередь; обход зависания unique — #54) |
 | 014 | Подписки и биллинг: пратейшн, dunning, счета, чеки | sql, queue, endpoint, mail | done — [013-billing-dunning](013-billing-dunning/) (proration нет, mail не подключён — #33, отложенный dunning — #12) |
 | 015 | Anti-fraud: velocity-правила, лимиты, внешний скоринг | kv, olap, endpoint | todo — ждёт #37 (`kv` пишет в SQL) и #34 (`io.aggregate`), иначе счётчики врёт |
 | 016 | API-gateway: роутинг, ключи, квоты, журнал доступа | endpoint, kv, olap | todo |

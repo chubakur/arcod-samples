@@ -57,6 +57,7 @@
 | [#44](https://github.com/chubakur/arcod/issues/44) | hash: `bind sig -> local` проходит check, но `io.hash` в рантайме нет — 500 | 017, первая версия спеки с `sig: hash` | fixed (проверено 25.11, 0a77141) | 25.11.2026 |
 | [#52](https://github.com/chubakur/arcod/issues/52) | impl: kv-алиас (`cache.get/set`) не описан — `io.load/io.save` ждут конверт `{b,h}` и пишут под `msg:` | 040, `impl/online.mjs` | open | 25.11.2026 |
 | [#53](https://github.com/chubakur/arcod/issues/53) | contract: ответ файлом — op с `blob.get` отдаёт JSON-запись с `content`, не байты с content-type | 040, `op exportFile` | open | 25.11.2026 |
+| [#54](https://github.com/chubakur/arcod/issues/54) | sql: duplicate insert (unique violation) вешает сервис — нет 409, `/healthz` не отвечает | 041, второй `POST /v1/zones` с тем же именем | open | 25.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -403,3 +404,24 @@ smoke → PASS. Пробелы, подтверждённые на этом пр�
   — ошибка check, а совет в hint («drop this bind») означает «kv будет в SQL».
   Для feature store это ограничение архитектурное: онлайн-нагрузка и метаданные
   делят одну БД; в README 040 это названо прямо.
+
+
+## Перепроверка 25.11.2026 (перед 041) и новые пробелы
+
+Чистое состояние: worktree `origin/main` = 0a77141, без `.arcod`, без
+контейнеров, сборка через `node /tmp/arcod-verify/bin/arcod.mjs` (глобальный
+npm link не трогали). Новых закрытых issue после проверки перед 040 нет: все
+закрытые (#1–#3, #5–#14, #42–#49) имеют `closedAt` не позже 24.11.2026
+11:22Z и уже перепроверены 25.11.2026. Перепроверка не потребовалась.
+
+Новые пробелы 041:
+
+- **#54** — повторная вставка с тем же `unique`-именем не отвечает и вешает
+  `/healthz`; обход — предварительный `io.find`. Это блокировало бы любую
+  модель с честным 409.
+- **A094 / #37** — `kv`-alias при `uses store: sql` нельзя привязать к Redis:
+  кэш уходит в `arcod_kv` внутри Postgres. В 041 Redis остаётся только
+  очередью, кэш зон/геокода — в SQL; в README это названо прямо.
+- Геотипа нет: полигон — строка, point-in-polygon и площадь считаются вручную
+  (`impl/quote.mjs`). Отдельный issue не заводил: это ожидаемое ограничение
+  языка, а не регрессия.
