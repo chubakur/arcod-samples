@@ -1,0 +1,9 @@
+export async function exportFile(input, io) {
+  const id = String(input.id || '').trim();
+  if (!id) return { error: 'NotFound' };
+  const row = await io.fetch('Export', id);
+  if (!row || !row.key) return { error: 'NotFound' };
+  const body = await io.blobGet(row.key);
+  if (body == null) return { error: 'NotFound' };
+  return { result: { key: row.key, content: String(body) } };
+}

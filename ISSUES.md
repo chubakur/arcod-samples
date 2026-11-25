@@ -41,7 +41,7 @@
 | [#32](https://github.com/chubakur/arcod/issues/32) | docs: `io.remote` возвращает {status, body}, README показывает тело | 012, Router.offer | fixed | 23.11.2026 |
 | [#33](https://github.com/chubakur/arcod/issues/33) | mail: провайдер mailpit объявлен, но у capability нет эффектов | 012 | fixed | 23.11.2026 |
 | [#46](https://github.com/chubakur/arcod/issues/46) | job: нет отменяемого контекста — выполняющийся внешний вызов не прервать | 037, cancel посреди slow-шага | open | 24.11.2026 |
-| [#47](https://github.com/chubakur/arcod/issues/47) | contract: POST всегда 201, нельзя объявить 200 для идемпотентного действия | 037, `POST /v1/runs/:id/cancel` → 201 | open | 24.11.2026 |
+| [#47](https://github.com/chubakur/arcod/issues/47) | contract: POST всегда 201, нельзя объявить 200 для идемпотентного действия | 037, `POST /v1/runs/:id/cancel` → 201 | fixed (проверено 24.11, 6b5e477) | 25.11.2026 |
 | [#34](https://github.com/chubakur/arcod/issues/34) | store: нет агрегата (sum/avg) — деньги в отчёте считаются вычиткой строк и молча занижаются | 013, `impl/stats.mjs` | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#36](https://github.com/chubakur/arcod/issues/36) | sql: параллельные io-вызовы на одном MySQL-соединении обмениваются наборами строк | 014, job transcode + HTTP | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#37](https://github.com/chubakur/arcod/issues/37) | kv: `bind cache -> redis` поднимает контейнер, но io.save/load пишут в SQL `arcod_kv` | 014, первая версия | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
@@ -49,12 +49,15 @@
 | [#39](https://github.com/chubakur/arcod/issues/39) | impl: файлы склеиваются в один модуль — одинаковое имя функции ломает `build --impl` | 015, `subjectHash` в двух файлах | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#40](https://github.com/chubakur/arcod/issues/40) | Нет способа вызвать операцию по расписанию: cron есть только у workflow | 016, операция `closeDue` | closed как duplicate → #12 | 24.11.2026 |
 | [#41](https://github.com/chubakur/arcod/issues/41) | Несколько `service` в одном модуле: `check` чист, но в compose и роутинге только первый | тест Store + Cache | open | 24.11.2026 |
-| [#42](https://github.com/chubakur/arcod/issues/42) | endpoint: `localhost` → `host.docker.internal`, fetch выбирает IPv6 и падает | 016, `io.remote` Mailer | open | 24.11.2026 |
+| [#42](https://github.com/chubakur/arcod/issues/42) | endpoint: `localhost` → `host.docker.internal`, fetch выбирает IPv6 и падает | 016, `io.remote` Mailer | fixed (проверено 25.11, 0a77141) | 25.11.2026 |
 | [#43](https://github.com/chubakur/arcod/issues/43) | postgres + queue: outbox-DDL с запятой перед `)` — миграции падают | 036, минимальный pgprobe2 | fixed (проверено 24.11, 9233d2d) | 24.11.2026 |
 | [#48](https://github.com/chubakur/arcod/issues/48) | blob: `io.blobPut` принимает только string — бинарные вложения хранятся base64 | 038, вложение письма в S3 | open | 24.11.2026 |
-| [#49](https://github.com/chubakur/arcod/issues/49) | queue: dead letter только читается — запись нельзя снять после replay | 038, `replay` + `GET /v1/dead` | open | 24.11.2026 |
+| [#49](https://github.com/chubakur/arcod/issues/49) | queue: dead letter только читается — запись нельзя снять после replay | 038, `replay` + `GET /v1/dead` | fixed (проверено 24.11, 6b5e477) | 25.11.2026 |
 
-| [#44](https://github.com/chubakur/arcod/issues/44) | hash: `bind sig -> local` проходит check, но `io.hash` в рантайме нет — 500 | 017, первая версия спеки с `sig: hash` | open | 24.11.2026 |
+| [#44](https://github.com/chubakur/arcod/issues/44) | hash: `bind sig -> local` проходит check, но `io.hash` в рантайме нет — 500 | 017, первая версия спеки с `sig: hash` | fixed (проверено 25.11, 0a77141) | 25.11.2026 |
+| [#52](https://github.com/chubakur/arcod/issues/52) | impl: kv-алиас (`cache.get/set`) не описан — `io.load/io.save` ждут конверт `{b,h}` и пишут под `msg:` | 040, `impl/online.mjs` | open | 25.11.2026 |
+| [#53](https://github.com/chubakur/arcod/issues/53) | contract: ответ файлом — op с `blob.get` отдаёт JSON-запись с `content`, не байты с content-type | 040, `op exportFile` | open | 25.11.2026 |
+
 ## Перепроверка 19.11.2026 (перед 006)
 
 Закрыты после прошлой проверки: #11, #13, #14 (18.11.2026, 16:34–16:44).
@@ -364,3 +367,39 @@ smoke → PASS. Пробелы, подтверждённые на этом пр�
   сначала надо проверить, должно ли это падать.
 - **#39** — impl склеиваются в один модуль: две константы OPS дали
   "duplicate top-level name", обошли префиксами.
+
+## Перепроверка 25.11.2026 (перед 040) и новые пробелы
+
+Чистое состояние: worktree "origin/main" = 0a77141 (свежий после 6b5e477), без
+".arcod", без контейнеров, сборка через "node /tmp/arcod-verify/bin/arcod.mjs"
+(глобальный npm link не трогали). Закрыты после прошлой проверки два issue, оба
+подтверждены:
+
+- **#42** (endpoint localhost → host.docker.internal) — **fixed**. Минимальная
+  спека без хранилищ: "bind Mailer -> endpoint(url: \"http://localhost:9097\")",
+  мок на хосте. В compose "MAILER_URL=http://host.docker.internal:9097" плюс
+  "extra_hosts: host-gateway"; "POST /v1/ping" вернул 200, мок записал вызов.
+- **#44** (hash: bind local, io.hash нет) — **fixed**. "use capability
+  arcod.std.hash", "bind sig -> local": "io.hash"/"io.verify" в рантайме есть,
+  ответ "{"hash":"scrypt$…","ok":true}" с кодом 201.
+
+"#45" закрыт как дубликат "#32" ещё 24.11 — проверки не требует. "#47" и "#49"
+проверены 24.11 (6b5e477), в таблице поправлены на fixed.
+
+Новые пробелы из 040-feature-store:
+
+- **#52** — kv-алиас в impl: "cache.get/cache.set" не имеют одноимённых
+  "io.get/io.set"; есть только "io.load/io.save" с конвертом "{ b, h }" и
+  жёстким префиксом "msg:". Первая версия "online" читала "rec.value" и
+  отдавала 404 при живом значении.
+- **#53** — ответ файлом: op с "files.get" возвращает запись "{ key, content }"
+  и "application/json"; CSV приходится разворачивать на клиенте. Тот же обход
+  в 039 ("reportFile").
+- **#26** (open) — olap: clickhouse-провайдер объявлен, адаптера нет; офлайн-
+  аналитика в 040 — S3 + "io.find" по строкам.
+- **#37** (fixed) — объясняет, почему онлайн-слой 040 живёт в "arcod_kv":
+  A094 не даёт "bind cache -> redis" при sql-хранилище.
+- A094 сам по себе читается тяжело: "bind cache -> redis" при "uses store: sql"
+  — ошибка check, а совет в hint («drop this bind») означает «kv будет в SQL».
+  Для feature store это ограничение архитектурное: онлайн-нагрузка и метаданные
+  делят одну БД; в README 040 это названо прямо.
