@@ -32,9 +32,9 @@
 | 013 | Зоны доставки: полигоны и тарифы, кэш, геокодер | sql, kv, endpoint | done — [041-delivery-zones](041-delivery-zones/) (kv-кэш в SQL: A094/#37, Redis — очередь; обход зависания unique — #54) |
 | 014 | Подписки и биллинг: пратейшн, dunning, счета, чеки | sql, queue, endpoint, mail | done — [013-billing-dunning](013-billing-dunning/) (proration нет, mail не подключён — #33, отложенный dunning — #12) |
 | 015 | Anti-fraud: velocity-правила, лимиты, внешний скоринг | kv, olap, endpoint | todo — ждёт #37 (`kv` пишет в SQL) и #34 (`io.aggregate`), иначе счётчики врёт |
-| 016 | API-gateway: роутинг, ключи, квоты, журнал доступа | endpoint, kv, olap | todo |
+| 016 | API-gateway: роутинг, ключи, квоты, журнал доступа | endpoint, kv, olap | todo — отложено: нужен произвольный upstream и чтение заголовков (`impl` их не видит), иначе это не gateway, а набор фиксированных ручек |
 | 017 | Подписание документов: конверты, порядок, аудит, письма | sql, queue, blob, endpoint (mail) | done — [017-contract-signing](017-contract-signing/) |
-| 018 | Лента рекомендаций: коллаборативная фильтрация, снапшоты моделей | olap, sql, blob | todo |
+| 018 | Лента рекомендаций: коллаборативная фильтрация, снапшоты моделей | olap, sql, blob | done — [042-recommendation-feed](042-recommendation-feed/) (olap заменён на sql+S3: адаптера нет, #26; 3 внешние системы: postgres, redis, minio) |
 | 019 | GDPR-стирание: каскадный поиск PII и удаление по заданию | queue, sql, blob, endpoint | done — [015-gdpr-erasure](015-gdpr-erasure/) (kv заменён на строку аудита: #37) |
 | 020 | Аукцион: ставки, антиснайпинг, закрытие лота, уведомления | sql, queue, mail | done — [016-auction](016-auction/) (mail — внешний endpoint: провайдера mail нет) |
 | 021 | Коллаборативный редактор: OT/CRDT, курсоры, история версий | stream, sql, blob | todo |

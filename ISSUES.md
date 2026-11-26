@@ -57,7 +57,9 @@
 | [#44](https://github.com/chubakur/arcod/issues/44) | hash: `bind sig -> local` проходит check, но `io.hash` в рантайме нет — 500 | 017, первая версия спеки с `sig: hash` | fixed (проверено 25.11, 0a77141) | 25.11.2026 |
 | [#52](https://github.com/chubakur/arcod/issues/52) | impl: kv-алиас (`cache.get/set`) не описан — `io.load/io.save` ждут конверт `{b,h}` и пишут под `msg:` | 040, `impl/online.mjs` | open | 25.11.2026 |
 | [#53](https://github.com/chubakur/arcod/issues/53) | contract: ответ файлом — op с `blob.get` отдаёт JSON-запись с `content`, не байты с content-type | 040, `op exportFile` | open | 25.11.2026 |
-| [#54](https://github.com/chubakur/arcod/issues/54) | sql: duplicate insert (unique violation) вешает сервис — нет 409, `/healthz` не отвечает | 041, второй `POST /v1/zones` с тем же именем | open | 25.11.2026 |
+| [#54](https://github.com/chubakur/arcod/issues/54) | sql: duplicate insert (unique violation) вешает сервис — нет 409, `/healthz` не отвечает | 041, второй `POST /v1/zones` с тем же именем | fixed (проверено 26.11, bbd0a2b) | 26.11.2026 |
+| [#55](https://github.com/chubakur/arcod/issues/55) | job: упавший консьюмер исчезает молча — ошибка только в dead-letter очереди | 042, job с `throw` + `io.queuePublish` | open | 26.11.2026 |
+| [#56](https://github.com/chubakur/arcod/issues/56) | contract: идемпотентный повтор POST не может ответить 200 — статус всегда объявленный 201 | 042, повтор `POST /v1/events` с тем же `clientEventId` | open | 26.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -425,3 +427,38 @@ npm link не трогали). Новых закрытых issue после пр
 - Геотипа нет: полигон — строка, point-in-polygon и площадь считаются вручную
   (`impl/quote.mjs`). Отдельный issue не заводил: это ожидаемое ограничение
   языка, а не регрессия.
+
+## Перепроверка 26.11.2026 (перед 042) и новые пробелы
+
+Чистое состояние: worktree `origin/main` = bbd0a2b, без `.arcod`, без
+контейнеров, сборка через `node /tmp/arcod-verify/bin/arcod.mjs` (глобальный
+npm link не трогали). После прошлой проверки закрыт один issue:
+
+- **#54** (duplicate insert вешает сервис) — **fixed**. Минимальная спека
+  `sql(ttl) + rules { unique Widget.name }`, `impl/create.mjs` вставляет без
+  предварительного `find`: первый POST → 201, второй → **409 Conflict**,
+  `/healthz` отвечает и до, и после, следующий POST с другим именем → 201.
+  Закрыто в `ab37d88` («a statement error no longer kills the only postgres
+  socket»). Комментарий с выводом: #54.
+
+042-recommendation-feed (postgres + redis + minio, два консьюмера) дал два
+новых пробела:
+
+- **#55** — упавший консьюмер не пишет в лог ничего: сообщение уходит в
+  `arcod:q:<topic>:dead` с `lastError`, но найти это можно только руками.
+  Проверено отдельным пробником: job с `throw`, в логе сервиса — только старт
+  и миграции.
+- **#56** — успешный POST всегда отвечает объявленным 201: идемпотентная
+  досылка события возвращает ту же строку, но не может ответить 200.
+
+Старые пробелы, которые снова всплыли (без новых issue):
+
+- **#52** — `io.save(key, {...})` без конверта `{b,h}` молча пишет
+  `{"h":null}`; пойман только запросом в `arcod_kv`.
+- **#37** — при `store: sql` kv-алиас живёт в `arcod_kv`: `bind pointer ->
+  redis` отклоняется на `check` (A094).
+- **#10** — нет атомарного счётчика: признаки пар хранятся по-пользовательски
+  (`Touch`) и суммируются при сборке снапшота.
+
+Итог: 042 собран, `smoke.sh` → PASS (каталог, идемпотентный ingest, два
+консьюмера, снапшот в S3, co-occurrence лента, холодная популярность).
