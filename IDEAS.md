@@ -41,7 +41,7 @@
 | 022 | Планировщик встреч: слоты, часовые пояса, приглашения | sql, mail, queue | done — [045-meeting-scheduler](045-meeting-scheduler/) (mail → .ics в S3, partial) |
 | 023 | Пайплайн CSV→отчёт: валидация, дедуп, агрегаты, ошибки | blob, queue, sql, olap | todo |
 | 024 | Прокси-кэш внешнего API: TTL, stale-while-revalidate, метрики | endpoint, kv, olap | todo |
-| 025 | Модерация контента: очередь, роли, решения, апелляции | queue, identity, sql, mail | todo |
+| 025 | Модерация контента: очередь, роли, решения, апелляции | queue, identity, sql, mail | done — [049-content-moderation](049-content-moderation/) (4 системы: keycloak, postgres, redis, minio; 3 консьюмера; почта не подключена — уведомления внутри, #60) |
 | 026 | Оркестратор LLM-агентов: инструменты, шаги, бюджет токенов | llm, sql, queue, blob | todo |
 | 027 | Склад: резервы и партии, истечение брони, уведомления | sql, queue, mail | todo |
 | 028 | Тарифы SaaS: метеринг, счета, перерасход, чеки | olap, sql, queue, mail | todo |
