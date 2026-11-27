@@ -48,7 +48,7 @@
 | [#38](https://github.com/chubakur/arcod/issues/38) | impl: операция `request` роняет сервис — `Identifier 'handleRequest' has already been declared` | 015, операция `request` | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#39](https://github.com/chubakur/arcod/issues/39) | impl: файлы склеиваются в один модуль — одинаковое имя функции ломает `build --impl` | 015, `subjectHash` в двух файлах | fixed (проверено 24.11, 411c01d) | 24.11.2026 |
 | [#40](https://github.com/chubakur/arcod/issues/40) | Нет способа вызвать операцию по расписанию: cron есть только у workflow | 016, операция `closeDue` | closed как duplicate → #12 | 24.11.2026 |
-| [#41](https://github.com/chubakur/arcod/issues/41) | Несколько `service` в одном модуле: `check` чист, но в compose и роутинге только первый | тест Store + Cache | open | 24.11.2026 |
+| [#41](https://github.com/chubakur/arcod/issues/41) | Несколько `service` в одном модуле: `check` чист, но в compose и роутинге только первый | тест Store + Cache | fixed (проверено 27.11, 8216371) | 27.11.2026 |
 | [#42](https://github.com/chubakur/arcod/issues/42) | endpoint: `localhost` → `host.docker.internal`, fetch выбирает IPv6 и падает | 016, `io.remote` Mailer | fixed (проверено 25.11, 0a77141) | 25.11.2026 |
 | [#43](https://github.com/chubakur/arcod/issues/43) | postgres + queue: outbox-DDL с запятой перед `)` — миграции падают | 036, минимальный pgprobe2 | fixed (проверено 24.11, 9233d2d) | 24.11.2026 |
 | [#48](https://github.com/chubakur/arcod/issues/48) | blob: `io.blobPut` принимает только string — бинарные вложения хранятся base64 | 038, вложение письма в S3 | open | 24.11.2026 |
@@ -58,8 +58,9 @@
 | [#52](https://github.com/chubakur/arcod/issues/52) | impl: kv-алиас (`cache.get/set`) не описан — `io.load/io.save` ждут конверт `{b,h}` и пишут под `msg:` | 040, `impl/online.mjs` | open | 25.11.2026 |
 | [#53](https://github.com/chubakur/arcod/issues/53) | contract: ответ файлом — op с `blob.get` отдаёт JSON-запись с `content`, не байты с content-type | 040, `op exportFile` | open | 25.11.2026 |
 | [#54](https://github.com/chubakur/arcod/issues/54) | sql: duplicate insert (unique violation) вешает сервис — нет 409, `/healthz` не отвечает | 041, второй `POST /v1/zones` с тем же именем | fixed (проверено 26.11, bbd0a2b) | 26.11.2026 |
-| [#55](https://github.com/chubakur/arcod/issues/55) | job: упавший консьюмер исчезает молча — ошибка только в dead-letter очереди | 042, job с `throw` + `io.queuePublish` | open | 26.11.2026 |
+| [#55](https://github.com/chubakur/arcod/issues/55) | job: упавший консьюмер исчезает молча — ошибка только в dead-letter очереди | 042, job с `throw` + `io.queuePublish` | fixed (проверено 27.11, 8216371) | 27.11.2026 |
 | [#56](https://github.com/chubakur/arcod/issues/56) | contract: идемпотентный повтор POST не может ответить 200 — статус всегда объявленный 201 | 042, повтор `POST /v1/events` с тем же `clientEventId` | open | 26.11.2026 |
+| [#57](https://github.com/chubakur/arcod/issues/57) | Параллельные op с `events.publish`: конфликт в одном откатывает другой и отдаёт 500 (`25P02`) вместо 409 | минимальный спек `Rows.put` + два параллельных POST с одним id; 043, гонка append | open | 27.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
