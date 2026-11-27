@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End-to-end: mysql + minio + rabbitmq + service, queue consumer, retry, errors.
+# End-to-end: mysql + minio + redis queue + service, queue consumer, retry, errors.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -21,7 +21,7 @@ for _ in $(seq 1 90); do
   sleep 1
 done
 curl -fsS "$BASE/healthz" >/dev/null
-say "health: ok (service + mysql + minio + rabbitmq)"
+say "health: ok (service + mysql + minio + redis queue)"
 
 REPORT=$(curl -fsS -X POST "$BASE/v1/reports" -H 'content-type: application/json' \
   -d '{"name":"daily.txt","body":"hello world\nsecond line here"}')

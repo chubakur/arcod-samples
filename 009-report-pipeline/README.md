@@ -11,12 +11,12 @@
 | `ReportPipeline` | HTTP API + consumer очереди | — |
 | `db` | отчёты и outbox | `mysql` |
 | `s3` | тело отчёта | `s3` (MinIO) |
-| `mq` | очередь заданий | `rabbitmq` |
+| `queue` | очередь заданий | `redis` |
 
 ```
 POST /v1/reports ──▶ mysql: status=queued
                  └─▶ s3: body
-                 └─▶ outbox ──▶ rabbitmq jobs ──▶ consumer:
+                 └─▶ outbox ──▶ redis jobs ──▶ consumer:
                                                     s3.read → count → mysql: done
 ```
 

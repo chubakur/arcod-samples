@@ -212,7 +212,6 @@ service Billing : http {
 
 environment dev {
   bind store -> mysql(host: "db", port: 3306)
-  bind locks -> redis(host: "kv", port: 6379)
   bind events -> redis(host: "queue", port: 6379)
   bind files -> s3(host: "s3", port: 9000)
   bind uuid -> local

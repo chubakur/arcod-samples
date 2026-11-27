@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End-to-end: mysql + redis(kv) + redis(queue) + minio + external payment gateway.
+# End-to-end: mysql (kv in arcod_kv) + redis(queue) + minio + external payment gateway.
 # Plan -> subscribe -> charge consumer -> receipt in S3; a soft decline goes
 # through the dunning consumer and succeeds on the second attempt; a hard
 # decline parks the subscription as past_due.
@@ -44,7 +44,7 @@ for _ in $(seq 1 150); do
   sleep 1
 done
 curl -fsS "$BASE/healthz" >/dev/null || fail "service did not become healthy"
-say "health: ok (service + mysql + redis kv + redis queue + minio + gateway mock)"
+say "health: ok (service + mysql + redis queue + minio + gateway mock)"
 
 wait_status() {
   local id="$1" want="$2"

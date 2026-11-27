@@ -11,7 +11,7 @@
 |-----------|------|----------|
 | `Shop` | HTTP API + consumer очереди | — |
 | `db` | товары и заказы | `mysql` |
-| `mq` | очередь заданий на упаковку | `rabbitmq` |
+| `queue` | очередь заданий на упаковку | `redis` |
 | `s3` | счёт-фактура заказа | `s3` (MinIO) |
 | `Gateway` | авторизация платежа | `endpoint` (внешний сервис, `mock/gateway.mjs`) |
 
@@ -19,7 +19,7 @@
 POST /v1/orders ──▶ mysql: Product (stock -= qty)
                  ├─▶ Gateway POST /v1/charges ── approved?
                  ├─▶ mysql: Order status=paid|rejected
-                 └─▶ outbox ──▶ rabbitmq pack ──▶ consumer:
+                 └─▶ outbox ──▶ redis pack ──▶ consumer:
                                                    s3.put invoice
                                                    mysql: Order status=packed
 ```

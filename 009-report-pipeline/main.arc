@@ -77,7 +77,7 @@ service ReportPipeline : http {
 environment dev {
   bind store -> mysql(host: "db", port: 3306)
   bind files -> s3(host: "s3", port: 9000)
-  bind events -> rabbitmq(host: "mq", port: 5672)
+  bind events -> redis(host: "queue", port: 6379)
   bind uuid -> local
   deploy docker
 }

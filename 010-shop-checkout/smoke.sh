@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# End-to-end: mysql + minio + rabbitmq + external gateway, payment, queue consumer.
+# End-to-end: mysql + minio + redis queue + external gateway, payment, queue consumer.
 set -euo pipefail
 cd "$(dirname "$0")"
 
@@ -35,7 +35,7 @@ for _ in $(seq 1 90); do
   sleep 1
 done
 curl -fsS "$BASE/healthz" >/dev/null
-say "health: ok (service + mysql + minio + rabbitmq)"
+say "health: ok (service + mysql + minio + redis queue)"
 
 PROD=$(curl -fsS -X POST "$BASE/v1/products" -H 'content-type: application/json' \
   -d '{"sku":"acme-mug","title":"ACME mug","price":1250,"stock":10}')
