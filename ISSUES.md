@@ -63,6 +63,7 @@
 | [#57](https://github.com/chubakur/arcod/issues/57) | Параллельные op с `events.publish`: конфликт в одном откатывает другой и отдаёт 500 (`25P02`) вместо 409 | минимальный спек `Rows.put` + два параллельных POST с одним id; 043, гонка append | open | 27.11.2026 |
 | [#58](https://github.com/chubakur/arcod/issues/58) | sql: `update` без предусловия — параллельные записи теряют обновления (нет CAS) | 044, 10 параллельных `POST /v1/docs/:id/ops` с разными `clientId`: все 201, version 2 вместо 10 | open | 27.11.2026 |
 | [#61](https://github.com/chubakur/arcod/issues/61) | impl: `events.dead` вызывается как `io.queueDead`, `io.dead` отсутствует — 500 на `GET /v1/dead` | 046, `io.dead('matchmake')` → `TypeError` | open | 27.11.2026 |
+| [#63](https://github.com/chubakur/arcod/issues/63) | check: kv-алиас нельзя связать с сервисом на `sql` (A094) — SQL-сервису недоступен TTL-кэш/дедуп | 047, `uses seen: kv(ttl: 900s)` рядом с `uses store: sql` → A094 | open | 27.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -515,3 +516,25 @@ npm link не трогали). После прошлой проверки зак
 Итог: 046 собран, `smoke.sh` → PASS (подбор консьюмером и баланс команд,
 ready-check 3/4 → live, websocket `finished`, нулевая сумма Elo, 409 на
 повторный результат, снимок в S3, sweep возвращает четырёх, нет dead-letter).
+
+## 047-incident-response — пробелы (27.11.2026)
+
+Новый пример: дежурства, алерты с окном дедупа, ack/resolve, SLA-эскалация,
+постмортем в S3, live-фид по websocket. Состояние — postgres, очередь — redis,
+артефакты — minio, поток — websocket. Два консьюмера (notify, postmortemDoc).
+
+- **A094 / #63.** Окно дедупа хотелось держать в `kv(ttl: 900s)`, но сервис
+  с `sql`-store не может иметь kv-алиас: `check` падает на A094 (kv ушёл бы в
+  таблицу `arcod_kv` основного стора). Дедуп перенесён в SQL (find +
+  сравнение `openedAt`). SQL-сервис остаётся без TTL-кэша.
+- **#60 (open).** Уведомления только websocket: ни письма, ни PagerDuty/Slack
+  из op/job — `net` запрещён, `mail`-провайдера нет.
+- **#12 (open).** Job не имеет cron-триггера (только `on: events.*`), Sweep
+  вынесен в `POST /v1/sweep` и вызывается снаружи. #12 про `at/after`, не про
+  повторяющийся запуск — отдельного issue не заводил, чтобы не дублировать.
+- Проверки: `arcod check` — 0 ошибок / 12 W012 (нет примеров в контракте);
+  `smoke.sh` → PASS: сервис и смена (409 на дубль/пересечение, 400 на
+  обратный интервал), алерт назначает дежурного консьюмером, дедуп 2-го
+  алерта, websocket `acknowledged`, идемпотентный ack, 409 после resolve,
+  постмортем `.md` в S3 с таймлайном, sweep эскалирует один раз, статистика,
+  пустой dead-letter.
