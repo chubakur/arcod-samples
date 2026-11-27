@@ -31,7 +31,7 @@
 | 012 | Feature store: online/offline консистентность, версии фич | sql, kv, olap | partial — [040-feature-store](040-feature-store/) (olap-адаптера нет, #26; kv-слой в arcod_kv, #37, #52) |
 | 013 | Зоны доставки: полигоны и тарифы, кэш, геокодер | sql, kv, endpoint | done — [041-delivery-zones](041-delivery-zones/) (kv-кэш в SQL: A094/#37, Redis — очередь; обход зависания unique — #54) |
 | 014 | Подписки и биллинг: пратейшн, dunning, счета, чеки | sql, queue, endpoint, mail | done — [013-billing-dunning](013-billing-dunning/) (proration нет, mail не подключён — #33, отложенный dunning — #12) |
-| 015 | Anti-fraud: velocity-правила, лимиты, внешний скоринг | kv, olap, endpoint | todo — ждёт #37 (`kv` пишет в SQL) и #34 (`io.aggregate`), иначе счётчики врёт |
+| 015 | Anti-fraud: velocity-правила, лимиты, внешний скоринг | kv, olap, endpoint | partial — [051-fraud-shield](051-fraud-shield/) (5 систем: postgres, redis, minio, вендор, websocket; velocity — `io.count` по SQL, TTL-кэша рядом с sql нет #63; OLAP нет #26) |
 | 016 | API-gateway: роутинг, ключи, квоты, журнал доступа | endpoint, kv, olap | todo — отложено: нужен произвольный upstream и чтение заголовков (`impl` их не видит), иначе это не gateway, а набор фиксированных ручек |
 | 017 | Подписание документов: конверты, порядок, аудит, письма | sql, queue, blob, endpoint (mail) | done — [017-contract-signing](017-contract-signing/) |
 | 018 | Лента рекомендаций: коллаборативная фильтрация, снапшоты моделей | olap, sql, blob | done — [042-recommendation-feed](042-recommendation-feed/) (olap заменён на sql+S3: адаптера нет, #26; 3 внешние системы: postgres, redis, minio) |
