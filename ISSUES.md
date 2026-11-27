@@ -60,10 +60,11 @@
 | [#54](https://github.com/chubakur/arcod/issues/54) | sql: duplicate insert (unique violation) вешает сервис — нет 409, `/healthz` не отвечает | 041, второй `POST /v1/zones` с тем же именем | fixed (проверено 26.11, bbd0a2b) | 26.11.2026 |
 | [#55](https://github.com/chubakur/arcod/issues/55) | job: упавший консьюмер исчезает молча — ошибка только в dead-letter очереди | 042, job с `throw` + `io.queuePublish` | fixed (проверено 27.11, 8216371) | 27.11.2026 |
 | [#56](https://github.com/chubakur/arcod/issues/56) | contract: идемпотентный повтор POST не может ответить 200 — статус всегда объявленный 201 | 042, повтор `POST /v1/events` с тем же `clientEventId` | open | 26.11.2026 |
-| [#57](https://github.com/chubakur/arcod/issues/57) | Параллельные op с `events.publish`: конфликт в одном откатывает другой и отдаёт 500 (`25P02`) вместо 409 | минимальный спек `Rows.put` + два параллельных POST с одним id; 043, гонка append | open | 27.11.2026 |
+| [#57](https://github.com/chubakur/arcod/issues/57) | Параллельные op с `events.publish`: конфликт в одном откатывает другой и отдаёт 500 (`25P02`) вместо 409 | минимальный спек `Rows.put` + два параллельных POST с одним id; 043, гонка append | fixed (проверено 27.11, 5e12c16) | 27.11.2026 |
 | [#58](https://github.com/chubakur/arcod/issues/58) | sql: `update` без предусловия — параллельные записи теряют обновления (нет CAS) | 044, 10 параллельных `POST /v1/docs/:id/ops` с разными `clientId`: все 201, version 2 вместо 10 | open | 27.11.2026 |
 | [#61](https://github.com/chubakur/arcod/issues/61) | impl: `events.dead` вызывается как `io.queueDead`, `io.dead` отсутствует — 500 на `GET /v1/dead` | 046, `io.dead('matchmake')` → `TypeError` | open | 27.11.2026 |
 | [#63](https://github.com/chubakur/arcod/issues/63) | check: kv-алиас нельзя связать с сервисом на `sql` (A094) — SQL-сервису недоступен TTL-кэш/дедуп | 047, `uses seen: kv(ttl: 900s)` рядом с `uses store: sql` → A094 | open | 27.11.2026 |
+| [#64](https://github.com/chubakur/arcod/issues/64) | identity: `auth op` без объявленного `error Unauthorized` проходит check, но анонимный запрос — 500 вместо 401 | 048, `auth op myTenants` без `errors: Unauthorized` → анонимный `GET /v1/tenants` = 500 | open | 27.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
@@ -538,3 +539,45 @@ ready-check 3/4 → live, websocket `finished`, нулевая сумма Elo, 4
   алерта, websocket `acknowledged`, идемпотентный ack, 409 после resolve,
   постмортем `.md` в S3 с таймлайном, sweep эскалирует один раз, статистика,
   пустой dead-letter.
+
+
+## Перепроверка 27.11.2026 (перед 048)
+
+Закрытых после прошлой проверки — один: **#57** (27.11, 10:07). Проверен на
+чистом состоянии (`origin/main` = `5e12c16`, worktree без `.arcod` и
+контейнеров, сборка через `node /tmp/arcod-verify/bin/arcod.mjs`): минимальный
+модуль из тикета, 20 уникальных id, по два параллельных `POST` с одним id и
+разными `v`. Во всех 20 случаях — ровно один `201` и один `409`, победившая
+строка читается `GET /v1/rows/:id` → `200`, `500` и `25P02` нет. Комментарий
+в issue, статус `fixed`.
+
+Новое: **#64** — `auth op` без объявленного `error Unauthorized` проходит
+`check`, но анонимный запрос получает 500 вместо 401.
+
+## 048-support-desk — пробелы (27.11.2026)
+
+Новый пример: мультитенантный help desk, вход через Keycloak, роли tenant-локальные
+(owner/agent/requester), SLA из текста заявки, вложения в S3, JSONL-выгрузка,
+аудит и уведомления. Состояние — postgres, очередь — redis, объекты — minio,
+вход — keycloak. Три консьюмера: triage, notify, exportRun.
+
+- **#64 (open, новый).** `auth op` без `errors: Unauthorized` проходит check,
+  но аноним получает 500 (нет записи в `ERRORS`). Пришлось добавить
+  `Unauthorized` и `on error Unauthorized` во все 19 auth-операций; после
+  этого 401 корректен.
+- **#48 (open).** `io.blobPut` принимает только string: вложения — текст,
+  бинарь пришлось бы base64.
+- **#12 (open).** cron у job нет; SLA-sweep — публичный `POST /v1/sweep`,
+  внешний runner.
+- **#60 (open).** нет исходящего HTTP/почты: уведомления только внутри БД.
+- **#63 (open).** TTL-кэш рядом с sql-сервисом недоступен (A094), дедуп — в SQL.
+- **#58 (open).** `assign` — последний выигравший: update без предусловия.
+
+Проверки: `arcod check` — 0 ошибок / 21 W012 (нет примеров в контракте);
+`smoke.sh` → PASS: аноним 401; tenant + 409 на дубль slug + 403 на чужой invite;
+идемпотентный join; priority high по тексту; triage назначает owner; notify
+создаёт уведомление; promote только owner; assign только staff; internal-заметка
+скрыта от requester; публичный ответ уведомляет; чужое уведомление 403; вложение
+в S3 читается; export только staff, queued → 409, готовый JSONL содержит заявку;
+stats/audit; sweep 1 → 0 идемпотентно; resolve/повтор 409; ответ клиента
+переоткрывает; изоляция второго tenant; пустой dead-letter.

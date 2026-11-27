@@ -62,3 +62,4 @@
 | 043 | IoT-платформа: поток телеметрии, правила, алерты, история | sql, queue, blob, endpoint (olap/stream нет) | done — [039-iot-telemetry](039-iot-telemetry/) |
 | 044 | Диспетчер выездов: заявки, автоподбор техника, фото в S3, уведомления | sql, queue, blob, endpoint | done — [012-field-dispatch](012-field-dispatch/) |
 | 045 | Дежурства и инциденты: on-call, алерты с дедупом, SLA-эскалация, постмортем в S3, live-фид | sql, queue, blob, stream | done — [047-incident-response](047-incident-response/) |
+| 046 | Help desk: мультитенантность, IAM, роли, SLA, вложения, выгрузки | identity, sql, blob, queue | done — [048-support-desk](048-support-desk/) |
