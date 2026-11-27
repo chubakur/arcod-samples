@@ -37,7 +37,7 @@
 | 018 | Лента рекомендаций: коллаборативная фильтрация, снапшоты моделей | olap, sql, blob | done — [042-recommendation-feed](042-recommendation-feed/) (olap заменён на sql+S3: адаптера нет, #26; 3 внешние системы: postgres, redis, minio) |
 | 019 | GDPR-стирание: каскадный поиск PII и удаление по заданию | queue, sql, blob, endpoint | done — [015-gdpr-erasure](015-gdpr-erasure/) (kv заменён на строку аудита: #37) |
 | 020 | Аукцион: ставки, антиснайпинг, закрытие лота, уведомления | sql, queue, mail | done — [016-auction](016-auction/) (mail — внешний endpoint: провайдера mail нет) |
-| 021 | Коллаборативный редактор: OT/CRDT, курсоры, история версий | stream, sql, blob | todo |
+| 021 | Коллаборативный редактор: OT/CRDT, курсоры, история версий | stream, sql, blob, queue | done — [044-collab-editor](044-collab-editor/) (серверный порядок операций, live-курсоры через websocket, снимки в S3 консьюмером; клиентский CRDT-rebase не реализован) |
 | 022 | Планировщик встреч: слоты, часовые пояса, приглашения | sql, mail, queue | todo |
 | 023 | Пайплайн CSV→отчёт: валидация, дедуп, агрегаты, ошибки | blob, queue, sql, olap | todo |
 | 024 | Прокси-кэш внешнего API: TTL, stale-while-revalidate, метрики | endpoint, kv, olap | todo |

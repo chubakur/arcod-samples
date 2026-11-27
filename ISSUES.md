@@ -61,6 +61,7 @@
 | [#55](https://github.com/chubakur/arcod/issues/55) | job: упавший консьюмер исчезает молча — ошибка только в dead-letter очереди | 042, job с `throw` + `io.queuePublish` | fixed (проверено 27.11, 8216371) | 27.11.2026 |
 | [#56](https://github.com/chubakur/arcod/issues/56) | contract: идемпотентный повтор POST не может ответить 200 — статус всегда объявленный 201 | 042, повтор `POST /v1/events` с тем же `clientEventId` | open | 26.11.2026 |
 | [#57](https://github.com/chubakur/arcod/issues/57) | Параллельные op с `events.publish`: конфликт в одном откатывает другой и отдаёт 500 (`25P02`) вместо 409 | минимальный спек `Rows.put` + два параллельных POST с одним id; 043, гонка append | open | 27.11.2026 |
+| [#58](https://github.com/chubakur/arcod/issues/58) | sql: `update` без предусловия — параллельные записи теряют обновления (нет CAS) | 044, 10 параллельных `POST /v1/docs/:id/ops` с разными `clientId`: все 201, version 2 вместо 10 | open | 27.11.2026 |
 
 ## Перепроверка 19.11.2026 (перед 006)
 
