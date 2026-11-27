@@ -47,7 +47,7 @@
 | 028 | Тарифы SaaS: метеринг, счета, перерасход, чеки | olap, sql, queue, mail | todo |
 | 029 | Каталог: варианты и SKU, картинки, кэш витрины | sql, blob, kv | todo |
 | 030 | Событийный лог: append-only, проекции, переигрывание, аналитика | sql, queue, blob, kv (olap нет: A076) | done — [043-event-log](043-event-log/) |
-| 031 | Матчмейкер: рейтинг, очередь, подбор состава, отмена | queue, kv, sql | todo |
+| 031 | Матчмейкер: рейтинг, очередь, подбор состава, отмена | sql, queue, blob, stream | done — [046-matchmaking-arena](046-matchmaking-arena/) (4 провайдера; ready-check через `sweep`, kv заменён lock-строкой: нет set-if-absent, #10) |
 | 032 | Календарь слотов: пересечение часовых поясов, перенос, письма | sql, mail, queue | todo |
 | 033 | Прямая загрузка в S3: подписанные ссылки, квоты, сироты | blob, identity, sql | todo |
 | 034 | Видеоплатформа: S3, очередь транскодинга, статусы, ссылки | blob, queue, sql, identity | done — [014-video-platform](014-video-platform/) |
