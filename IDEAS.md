@@ -43,7 +43,7 @@
 | 024 | Прокси-кэш внешнего API: TTL, stale-while-revalidate, метрики | endpoint, kv, olap | todo |
 | 025 | Модерация контента: очередь, роли, решения, апелляции | queue, identity, sql, mail | done — [049-content-moderation](049-content-moderation/) (4 системы: keycloak, postgres, redis, minio; 3 консьюмера; почта не подключена — уведомления внутри, #60) |
 | 026 | Оркестратор LLM-агентов: инструменты, шаги, бюджет токенов | llm, sql, queue, blob, endpoint | done — [050-agent-orchestrator](050-agent-orchestrator/) (5 систем: postgres, redis, minio, модель, песочница инструментов; 2 консьюмера; бюджет — оценка, `io.chat` без `usage` #65, без `tools` #66) |
-| 027 | Склад: резервы и партии, истечение брони, уведомления | sql, queue, mail | todo |
+| 027 | Склад: резервы и партии, истечение брони, уведомления | sql, queue, blob, endpoint | done — [052-warehouse-fulfillment](052-warehouse-fulfillment/) (5 систем: postgres, redis, minio, перевозчик, websocket; FEFO, backorder+restock, планировщик; уведомления — websocket, почты нет #60; CAS нет #58) |
 | 028 | Тарифы SaaS: метеринг, счета, перерасход, чеки | olap, sql, queue, mail | todo |
 | 029 | Каталог: варианты и SKU, картинки, кэш витрины | sql, blob, kv | todo |
 | 030 | Событийный лог: append-only, проекции, переигрывание, аналитика | sql, queue, blob, kv (olap нет: A076) | done — [043-event-log](043-event-log/) |
